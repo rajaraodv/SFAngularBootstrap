@@ -1,0 +1,35 @@
+<form name="myForm">
+    <div class="control-group" ng-class="{error: myForm.Name.$invalid}">
+        <label>Name</label>
+        <input type="text" name="Name" ng-model="opp.Name" required>
+        <span ng-show="myForm.Name.$error.required" class="help-inline">
+        Required</span>
+
+        <label>StageName</label>
+        <input type="text" name="StageName" ng-model="opp.StageName" required>
+        <span ng-show="myForm.StageName.$error.required" class="help-inline">
+        Required</span>
+
+        <label>CloseDate</label>
+        <input type="text" name="CloseDate" ng-model="opp.CloseDate" required>
+        <span ng-show="myForm.CloseDate.$error.required" class="help-inline">
+        Required</span>
+    </div>
+
+    <div class="control-group" ng-class="{error: myForm.Id.$invalid}">
+        <label>Id</label>
+        <input disabled="disabled" type="text" name="Id" ng-model="opp.Id">
+    </div>
+
+    <label>ExpectedRevenue</label>
+    <input disabled="disabled" name="ExpectedRevenue" ng-model="opp.ExpectedRevenue"></input>
+
+    <br>
+    <a href="#/" class="btn">Cancel</a>
+    <button ng-click="save()" ng-disabled="isClean() || myForm.$invalid"
+            class="btn btn-primary">Save
+    </button>
+    <button ng-click="destroy()"
+            ng-show="opp.Id" class="btn btn-danger">Delete
+    </button>
+</form>

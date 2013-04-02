@@ -1,0 +1,33 @@
+<input type="text" ng-model="search" class="search-query" placeholder="Search">
+
+<table width="80%">
+    <thead>
+    <tr>
+        <th>Id
+        </th>
+        <th>Name</th>
+        <th>StageName</th>
+        <th>CloseDate</th>
+        <th>ExpectedRevenue</th>
+        <th>Edit Opportunity</th>
+        <th>
+            <a href="#/new" class="btn btn-primary">New</a>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+
+    <tr ng-repeat="opp in opportunities | filter:search | orderBy:'Name'">
+        <td>{{opp.Id}}</td>
+        <td>{{opp.Name}}</td>
+        <td>{{opp.StageName}}</td>
+        <td>{{opp.CloseDate}}</td>
+        <td>{{opp.ExpectedRevenue}}</td>
+        <td>
+            <a href="#/edit/{{opp.Id}}"><i class="icon-pencil"></i></a>
+        </td>
+        <td></td>
+
+    </tr>
+    </tbody>
+</table>
