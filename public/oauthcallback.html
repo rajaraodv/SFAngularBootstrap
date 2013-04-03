@@ -32,10 +32,10 @@ OAuth callback page - loaded in the popup by OAuth authorization.
     <script>
         function onloadCallback() {
             window.opener.sessionCallback(window.location.href);
-            window.close();
-//            setTimeout(function () {
-//
-//            }, 700);
+
+            setTimeout(function () {
+              window.close();
+            }, 700);
         }
     </script>
 </head>
