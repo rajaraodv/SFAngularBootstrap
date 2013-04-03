@@ -98,11 +98,6 @@ if (forcetk.Client === undefined) {
         var that = this;
 
         var url = this.loginUrl + '/services/oauth2/token';
-        alert("in refreshAccessToken");
-        alert(url);
-        alert(this.clientId);
-        alert(this.refreshToken);
-        alert( that.proxyUrl);
 
         $j.ajax({
             type: 'POST',

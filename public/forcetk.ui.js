@@ -67,7 +67,6 @@
                 this.client.setRefreshToken(refreshToken);
                 this.client.refreshAccessToken(
                     function refreshAccessToken_successHandler(sessionToken) {
-                    	   alert("in refreshAccessToken_successHandler");
                         if (that.successCallback) {
                             that.client.setSessionToken(sessionToken.access_token, null, sessionToken.instance_url);
                             that.successCallback.call(that, that.client);
@@ -77,7 +76,6 @@
 
                     },
                     function refreshAccessToken_errorHandler(jqXHR, textStatus, errorThrown) {
-                        alert("in errorhandler");
                         that._authenticate.call(that);
                     }
                 );
@@ -146,7 +144,6 @@
                 //Simply checking for childwindow  won't work on iphone because iPhone doesn't allow checking (setInterval)
                 //until the *main/parent*-window is *in focus* (which wont be the case until the child window is closed).
                 window.sessionCallback = function(loc) {
-                    alert('in parents sessioncallback' + loc);
                     setTimeout(function() {
                         loginWindow.close();
                     }, 10);
@@ -199,8 +196,6 @@
         },
 
         _sessionCallback:function _sessionCallback(loc) {
-            alert("in _sessionCallback");
-            debugger;
             var oauthResponse = {},
                 fragment = loc.split("#")[1];
 
