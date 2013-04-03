@@ -143,10 +143,11 @@
                 //Simply checking for childwindow  won't work on iphone because iPhone doesn't allow checking (setInterval)
                 //until the *main/parent*-window is *in focus* (which wont be the case until the child window is closed).
                 window.sessionCallback = function(loc) {
+                    alert("in parent");
                     setTimeout(function() {
                         loginWindow.close();
-                    }, 100);
-                    //Call actual _sessionCallback as usual
+                    }, 10);
+
                     that._sessionCallback(loc);
                 };
 
