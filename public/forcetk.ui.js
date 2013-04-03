@@ -67,7 +67,7 @@
                 this.client.setRefreshToken(refreshToken);
                 this.client.refreshAccessToken(
                     function refreshAccessToken_successHandler(sessionToken) {
-                    	
+                    	   alert("in refreshAccessToken_successHandler");
                         if (that.successCallback) {
                             that.client.setSessionToken(sessionToken.access_token, null, sessionToken.instance_url);
                             that.successCallback.call(that, that.client);
@@ -77,6 +77,7 @@
 
                     },
                     function refreshAccessToken_errorHandler(jqXHR, textStatus, errorThrown) {
+                        alert("in errorhandler");
                         that._authenticate.call(that);
                     }
                 );
