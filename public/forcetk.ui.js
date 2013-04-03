@@ -127,6 +127,10 @@
 
         _authenticate:function _authenticate() {
             var that = this;
+            //IMPORTANT - Set this to global so that the child window can call this back via window.opener.sessionCallback
+            //Simply checking for childwindow  won't work on iphone because iPhone doesn't allow checking (setInterval)
+            //until the *main/parent*-window is *in focus* (which wont be the case until the child window is closed).
+            window.sessionCallback = this._sessionCallback;
 
             if (typeof window.device === 'undefined') { // Most likely app is running in a desktop browser
 
@@ -140,20 +144,15 @@
                         + ',toolbar=1,scrollbars=1,status=1,resizable=1,location=0,menuBar=0'
                         + ',left=' + centeredX + ',top=' + centeredY);
 
-                alert(loginWindow);
                 if (loginWindow) {
                     // Creating an interval to detect popup window location change event
                     var interval = setInterval(function () {
-                        alert("checking");
                         if (loginWindow.closed) {
-                            alert('child window closed');
                             // Clearing interval if popup was closed
                             clearInterval(interval);
                         } else {
-                            alert("not found");
                             var loc = loginWindow.location.href;
                             if (typeof loc !== 'undefined' && loc.indexOf(that.callbackURL) == 0) {
-                                alert('got location');
                                 clearInterval(interval);
                                 loginWindow.close();
                                 that._sessionCallback(loc);
