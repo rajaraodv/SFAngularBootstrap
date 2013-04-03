@@ -1,78 +1,73 @@
-var app = angular.module('project', ['AngularForce', 'AngularForceObjectFactory', 'Contact']);
-app.constant('SFConfig', {'sfLoginURL': 'https://login.salesforce.com/',
-    'consumerKey': '3MVG9A2kN3Bn17huxQ_nFw2X9UgjpxsCn.CZgify3keA9sgl.VASp6A5HxfUFUtKH9IN7sgBH4ow7aS1WLYaa',
-    'oAuthCallbackURL': 'http://localhost:3000',
-    'proxyUrl': 'http://localhost:3000/proxy/'
-});
-
-app.config(function ($routeProvider) {
-    $routeProvider.
-        when('/', {controller: ListCtrl, templateUrl: 'list.html'}).
-        when('/edit/:contactId', {controller: EditCtrl, templateUrl: 'detail.html'}).
-        when('/new', {controller: CreateCtrl, templateUrl: 'detail.html'}).
-        otherwise({redirectTo: '/'});
-});
-
 /**
- * Describe Salesforce object to be used in the app. For example: Below AngularJS factory shows how to describe and
- * create an 'Contact' object. And then set its type, fields, where-clause etc.
- *
- *  PS: This module is injected into ListCtrl, EditCtrl etc. controllers to further consume the object.
+ * Module dependencies.
  */
-angular.module('Contact', []).factory('Contact', function (AngularForceObjectFactory) {
-    var Contact = AngularForceObjectFactory({type: 'Contact', fields: ['FirstName', 'LastName', 'Title','Phone','Email', 'Id'], where: ''});
-    return Contact;
+
+var express = require('express')
+    , http = require('http')
+    , path = require('path')
+    , request = require('request');
+
+//SET APP_RELATIVE_PATH to a folder where your app's index.html resides.
+ var APP_RELATIVE_PATH = path.join(__dirname, '/public/');
+ console.log(APP_RELATIVE_PATH);
+   
+
+var app = express();
+
+app.configure(function () {
+    app.set('port', process.env.PORT || 3000);
+    app.use(express.favicon());
+    app.use(express.logger('dev'));
+    app.use(express.bodyParser());
+    app.use(express.static(APP_RELATIVE_PATH));
 });
 
-function ListCtrl($scope, AngularForce, Contact) {
-    AngularForce.login(function () {
-        Contact.query(function (data) {
-            $scope.contacts = data.records;
-            $scope.$apply();//Required coz sfdc uses jquery.ajax
-        });
-    });
-}
+app.configure('development', function () {
+    app.use(express.errorHandler());
+});
 
-function CreateCtrl($scope, $location, Contact) {
-    $scope.save = function () {
-        Contact.save($scope.contact, function (contact) {
-            var p = contact;
-            $scope.$apply(function () {
-                $location.path('/edit/' + p.id);
-            });
-        });
+app.all('/proxy/?*', function (req, res) {
+    log(req);
+    var body = req.body;
+    var contentType = "application/x-www-form-urlencoded";
+    if (body) {
+        //if doing oauth, then send body as form-urlencoded
+        if (req.headers["salesforceproxy-endpoint"].indexOf('oauth2') > 0) {
+            body = getAsUriParameters(body);
+        } else {//for everything else, it's json
+            contentType = "application/json";
+            body = JSON.stringify(body);
+        }
     }
+    request({
+        url: req.headers['salesforceproxy-endpoint'] || "https://login.salesforce.com//services/oauth2/token",
+        method: req.method,
+        headers: {"Content-Type": contentType,
+            "Authorization": req.headers["authorization"],
+            "X-User-Agent": req.headers["x-user-agent"]},
+        body: body
+    }).pipe(res);
+});
+
+function log(req) {
+    console.log("req.headers[\"authorization\"] = " + req.headers["authorization"]);
+    console.log("req.headers[\"salesforceproxy-endpoint\"] = " + req.headers["salesforceproxy-endpoint"]);
+    console.log('req.method = ' + req.method);
+    console.log('req.body ' + JSON.stringify(req.body));
 }
 
-function EditCtrl($scope, AngularForce, $location, $routeParams, Contact) {
-    var self = this;
-
-    AngularForce.login(function () {
-        Contact.get({id: $routeParams.contactId}, function (contact) {
-            self.original = contact;
-            $scope.contact = new Contact(self.original);
-            $scope.$apply();//Required coz sfdc uses jquery.ajax
-        });
-    });
-
-    $scope.isClean = function () {
-        return angular.equals(self.original, $scope.contact);
-    };
-
-    $scope.destroy = function () {
-        self.original.destroy(function () {
-            $scope.$apply(function () {
-                $location.path('/list');
-            });
-        });
-    };
-
-    $scope.save = function () {
-        $scope.contact.update(function () {
-            $scope.$apply(function () {
-                $location.path('/');
-            });
-
-        });
-    };
+function getAsUriParameters(data) {
+    var url = '';
+    for (var prop in data) {
+        url += encodeURIComponent(prop) + '=' +
+            encodeURIComponent(data[prop]) + '&';
+    }
+    var result = url.substring(0, url.length - 1);
+    console.log(result);
+    return result;
 }
+
+
+http.createServer(app).listen(app.get('port'), function () {
+    console.log("Express server listening on port " + app.get('port'));
+});
