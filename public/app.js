@@ -12,7 +12,6 @@ app.constant('SFConfig',
         'proxyUrl':  proxyUrl
     });
 
- alert(proxyUrl);
 app.config(function ($routeProvider) {
     $routeProvider.
         when('/', {controller: ListCtrl, templateUrl: 'list.html'}).
