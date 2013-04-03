@@ -43,6 +43,7 @@ angular.module('AngularForce', []).
                 if (creds.data)  // Event sets the `data` object with the auth data.
                     credsData = creds.data;
 
+                  debugger;
                 SFConfig.client = new forcetk.Client(credsData.clientId, credsData.loginUrl);
                 SFConfig.client.setSessionToken(credsData.accessToken, apiVersion, credsData.instanceUrl);
                 SFConfig.client.setRefreshToken(credsData.refreshToken);

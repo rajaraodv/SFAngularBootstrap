@@ -56,6 +56,7 @@ if (forcetk.Client === undefined) {
      * @constructor
      */
     forcetk.Client = function(clientId, loginUrl, proxyUrl) {
+        debugger;
         this.clientId = clientId;
         this.loginUrl = loginUrl || 'https://login.salesforce.com/';
         if (typeof proxyUrl === 'undefined' || proxyUrl === null) {

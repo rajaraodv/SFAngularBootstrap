@@ -62,7 +62,7 @@
 
             var refreshToken = localStorage.getItem('ftkui_refresh_token');
             
-            if (refreshToken) {
+            if (refreshToken && refreshToken != "undefined") {
                 var that = this;
                 this.client.setRefreshToken(refreshToken);
                 this.client.refreshAccessToken(
