@@ -42,7 +42,7 @@ app.all('/proxy/?*', function (req, res) {
     }
 
     if((!body || JSON.stringify(body) === "\"{}\"") && (typeof sfEndpoint != "string")) {
-        return res.send('Nothing to proxy. SF related info was not found in body or query params.');
+        return res.send('Request successful (but nothing to proxy to SF)');
     }
     request({
         url: sfEndpoint || "https://login.salesforce.com//services/oauth2/token",

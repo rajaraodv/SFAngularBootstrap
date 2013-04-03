@@ -73,17 +73,13 @@ angular.module('Contact', []).factory('Contact', function (AngularForceObjectFac
 
 function ListCtrl($scope, AngularForce, Contact, SFConfig) {
     $scope.login = function () {
-        alert('do login');
         AngularForce.login(function () {
-            alert("login successful!");
             $scope.query();
         });
     };
 
     $scope.query = function () {
-        alert("querying..");
         Contact.query(function (data) {
-            alert("..got contacts");
             $scope.contacts = data.records;
             $scope.$apply();//Required coz sfdc uses jquery.ajax
         });
