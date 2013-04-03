@@ -188,6 +188,7 @@
         },
 
         _sessionCallback:function _sessionCallback(loc) {
+            alert("in _sessionCallback");
             var oauthResponse = {},
                 fragment = loc.split("#")[1];
 

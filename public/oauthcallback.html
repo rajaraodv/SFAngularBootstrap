@@ -44,8 +44,8 @@ OAuth callback page - loaded in the popup by OAuth authorization.
                 }
             }
               alert(2);
-            //window.opener.sessionCallback(oauthResponse);
-            //window.close();
+            window.opener.sessionCallback(oauthResponse);
+            window.close();
         }
     </script>
 </head>
