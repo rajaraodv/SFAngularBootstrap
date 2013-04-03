@@ -149,11 +149,13 @@
                         } else {
                             var loc = loginWindow.location.href;
                             if (typeof loc !== 'undefined' && loc.indexOf(that.callbackURL) == 0) {
+                                alert('got location');
+                                clearInterval(interval);
                                 loginWindow.close();
                                 that._sessionCallback(loc);
                             }
                         }
-                    }, 250);
+                    }, 500);
 
                     loginWindow.focus();
                 }
