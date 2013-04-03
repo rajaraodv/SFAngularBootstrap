@@ -1,6 +1,5 @@
-<input type="text" ng-model="search" class="search-query" placeholder="Local Search">
-
-<table width="80%" class="table">
+<a ng-click="login()" ng-show="!contacts" class="btn btn-primary">Login</a> <a ng-show="contacts" href="#/new" class="btn">New</a>
+<table width="80%" class="table" ng-show="contacts">
     <thead>
     <tr>
         <th class='hidden-phone'>Id</th>
@@ -9,23 +8,19 @@
         <th>Phone</th>
         <th class='hidden-phone'>Email</th>
         <th>Edit</th>
-        <th>
-            <a href="#/new" class="btn btn-primary">New</a>
-        </th>
     </tr>
     </thead>
     <tbody>
 
     <tr ng-repeat="contact in contacts">
         <td class='hidden-phone'>{{contact.Id}}</td>
-        <td >{{contact.FirstName}} {{contact.LastName}}</td>
+        <td>{{contact.FirstName}} {{contact.LastName}}</td>
         <td class='hidden-phone'>{{contact.Title}}</td>
         <td>{{contact.Phone}}</td>
         <td class='hidden-phone'>{{contact.Email}}</td>
         <td>
             <a href="#/edit/{{contact.Id}}"><i class="icon-pencil"></i></a>
         </td>
-        <td></td>
 
     </tr>
     </tbody>

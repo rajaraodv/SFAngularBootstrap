@@ -1,7 +1,9 @@
 var app = angular.module('project', ['AngularForce', 'AngularForceObjectFactory', 'Contact']);
+
 //Set SFConfig
 app.constant('SFConfig', getSFConfig());
 
+//Set AngularJS Routes
 app.config(function ($routeProvider) {
     //Config Angular Routes
     $routeProvider.
@@ -68,13 +70,24 @@ angular.module('Contact', []).factory('Contact', function (AngularForceObjectFac
     return Contact;
 });
 
-function ListCtrl($scope, AngularForce, Contact) {
-    AngularForce.login(function () {
+function ListCtrl($scope, AngularForce, Contact, SFConfig) {
+    $scope.login = function () {
+        AngularForce.login(function () {
+            $scope.query();
+        });
+    };
+
+    $scope.query = function () {
         Contact.query(function (data) {
             $scope.contacts = data.records;
             $scope.$apply();//Required coz sfdc uses jquery.ajax
         });
-    });
+    }
+
+    //Already logged in, probably coming back from details or new page so automatically re-query and show the list
+    if (SFConfig.client) {
+        $scope.query();
+    }
 }
 
 function CreateCtrl($scope, $location, Contact) {
