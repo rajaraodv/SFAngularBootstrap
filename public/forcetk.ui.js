@@ -140,10 +140,12 @@
                         + ',toolbar=1,scrollbars=1,status=1,resizable=1,location=0,menuBar=0'
                         + ',left=' + centeredX + ',top=' + centeredY);
 
+                alert(loginWindow);
                 if (loginWindow) {
                     // Creating an interval to detect popup window location change event
                     var interval = setInterval(function () {
                         if (loginWindow.closed) {
+                            alert('child window closed');
                             // Clearing interval if popup was closed
                             clearInterval(interval);
                         } else {
@@ -155,7 +157,7 @@
                                 that._sessionCallback(loc);
                             }
                         }
-                    }, 500);
+                    }, 10);
 
                     loginWindow.focus();
                 }
