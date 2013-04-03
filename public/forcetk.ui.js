@@ -149,6 +149,7 @@
                             // Clearing interval if popup was closed
                             clearInterval(interval);
                         } else {
+                            alert("not found");
                             var loc = loginWindow.location.href;
                             if (typeof loc !== 'undefined' && loc.indexOf(that.callbackURL) == 0) {
                                 alert('got location');
