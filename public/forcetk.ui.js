@@ -128,7 +128,7 @@
             var that = this;
 
             if (typeof window.device === 'undefined') { // Most likely app is running in a desktop browser
-
+                alert("rajarao");
                 var winHeight = 524,
                     winWidth = 674,
                     centeredY = window.screenY + (window.outerHeight / 2 - winHeight / 2),
