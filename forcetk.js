@@ -67,7 +67,6 @@ if (forcetk.Client === undefined) {
                 this.proxyUrl = location.protocol + "//" + location.hostname
                     + "/services/proxy";
             }
-            this.proxyUrl = 'http://localhost:3000/proxy/';
             this.authzHeader = "Authorization";
         } else {
             // On a server outside VF
