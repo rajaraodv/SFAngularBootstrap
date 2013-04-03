@@ -29,12 +29,14 @@ app.config(function ($routeProvider) {
  * @returns SFConfig object
  */
 function getSFConfig() {
+    debugger;
     var location = document.location.origin;
     var proxyUrl = location + '/proxy/';
 
     if (location.indexOf('localhost') >= 0) {
         return {
             'sfLoginURL': 'https://login.salesforce.com/',
+            //'consumerKey': '3MVG9A2kN3Bn17huxQ_nFw2X9UgjpxsCn.CZgify3keA9sgl.VASp6A5HxfUFUtKH9IN7sgBH4ow7aS1WLYaa',
             'consumerKey': '3MVG9A2kN3Bn17huxQ_nFw2X9UgjpxsCn.CZgify3keA9sgl.VASp6A5HxfUFUtKH9IN7sgBH4ow7aS1WLYaa',
             'oAuthCallbackURL': 'http://localhost:3000/oauthcallback.html',
             'proxyUrl': proxyUrl,
@@ -72,6 +74,7 @@ angular.module('Contact', []).factory('Contact', function (AngularForceObjectFac
 });
 
 function ListCtrl($scope, AngularForce, Contact, SFConfig) {
+    debugger;
     $scope.login = function () {
         AngularForce.login(function () {
             $scope.query();

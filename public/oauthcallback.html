@@ -33,7 +33,8 @@ OAuth callback page - loaded in the popup by OAuth authorization.
     <script>
         function onloadCallback(){
             var oauthResponse = {};
-
+            debugger;
+            alert(1);
             if (window.location.hash) {
                 var message = window.location.hash.substr(1);
                 var nvps = message.split('&');
@@ -42,12 +43,13 @@ OAuth callback page - loaded in the popup by OAuth authorization.
                     oauthResponse[parts[0]] = unescape(parts[1]);
                 }
             }
-
-            window.opener.sessionCallback(oauthResponse);
-            window.close();
+              alert(2);
+            //window.opener.sessionCallback(oauthResponse);
+            //window.close();
         }
     </script>
 </head>
+<H4> Please close this page </h4>
 <body onload="onloadCallback()">
 </body>
 </html>
