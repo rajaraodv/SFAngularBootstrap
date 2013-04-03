@@ -128,7 +128,6 @@
             var that = this;
 
             if (typeof window.device === 'undefined') { // Most likely app is running in a desktop browser
-                alert("rajarao");
                 var winHeight = 524,
                     winWidth = 674,
                     centeredY = window.screenY + (window.outerHeight / 2 - winHeight / 2),
@@ -144,11 +143,10 @@
                 //Simply checking for childwindow  won't work on iphone because iPhone doesn't allow checking (setInterval)
                 //until the *main/parent*-window is *in focus* (which wont be the case until the child window is closed).
                 window.sessionCallback = function(loc) {
-                    alert('in parent')
                     setTimeout(function() {
                         loginWindow.close();
-                    }, 10);
-
+                    }, 100);
+                    //Call actual _sessionCallback as usual
                     that._sessionCallback(loc);
                 };
 

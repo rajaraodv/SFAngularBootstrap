@@ -31,17 +31,13 @@ OAuth callback page - loaded in the popup by OAuth authorization.
     <title>OAuth Callback</title>
     <script>
         function onloadCallback() {
-
-            setTimeout(function() {
+            setTimeout(function () {
                 window.opener.sessionCallback(window.location.href);
-               // window.close();
-
             }, 500);
-
         }
     </script>
 </head>
-<H4> Please close this page </h4>
+<H4> Please close this page. </h4>
 
 <body onload="onloadCallback()">
 </body>
