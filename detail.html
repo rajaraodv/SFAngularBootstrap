@@ -1,28 +1,35 @@
 <form name="myForm">
     <div class="control-group" ng-class="{error: myForm.Name.$invalid}">
-        <label>Name</label>
-        <input type="text" name="Name" ng-model="opp.Name" required>
-        <span ng-show="myForm.Name.$error.required" class="help-inline">
+        <label>First Name</label>
+        <input type="text" name="FirstName" ng-model="contact.FirstName" required>
+        <span ng-show="myForm.FirstNameName.$error.required" class="help-inline">
         Required</span>
 
-        <label>StageName</label>
-        <input type="text" name="StageName" ng-model="opp.StageName" required>
-        <span ng-show="myForm.StageName.$error.required" class="help-inline">
+        <label>Last Name</label>
+        <input type="text" name="LastName" ng-model="contact.LastName" required>
+        <span ng-show="myForm.LastName.$error.required" class="help-inline">
         Required</span>
 
-        <label>CloseDate</label>
-        <input type="text" name="CloseDate" ng-model="opp.CloseDate" required>
-        <span ng-show="myForm.CloseDate.$error.required" class="help-inline">
+        <label>Title</label>
+        <input type="text" name="Title" ng-model="contact.Title" required>
+        <span ng-show="myForm.Title.$error.required" class="help-inline">
         Required</span>
-    </div>
 
-    <div class="control-group" ng-class="{error: myForm.Id.$invalid}">
+        <label>Email</label>
+        <input type="text" name="Email" ng-model="contact.Email" required>
+        <span ng-show="myForm.Email.$error.required" class="help-inline">
+        Required</span>
+
+
+        <label>Phone</label>
+        <input type="text" name="Phone" ng-model="contact.Phone" required>
+        <span ng-show="myForm.Phone.$error.required" class="help-inline">
+        Required</span>
+
         <label>Id</label>
-        <input disabled="disabled" type="text" name="Id" ng-model="opp.Id">
+        <input disabled="disabled" type="text" name="Id" ng-model="contact.Id">
     </div>
 
-    <label>ExpectedRevenue</label>
-    <input disabled="disabled" name="ExpectedRevenue" ng-model="opp.ExpectedRevenue"></input>
 
     <br>
     <a href="#/" class="btn">Cancel</a>
@@ -30,6 +37,6 @@
             class="btn btn-primary">Save
     </button>
     <button ng-click="destroy()"
-            ng-show="opp.Id" class="btn btn-danger">Delete
+            ng-show="contact.Id" class="btn btn-danger">Delete
     </button>
 </form>

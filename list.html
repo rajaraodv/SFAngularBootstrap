@@ -1,15 +1,14 @@
-<input type="text" ng-model="search" class="search-query" placeholder="Search">
+<input type="text" ng-model="search" class="search-query" placeholder="Local Search">
 
-<table width="80%">
+<table width="80%" class="table">
     <thead>
     <tr>
-        <th>Id
-        </th>
-        <th>Name</th>
-        <th>StageName</th>
-        <th>CloseDate</th>
-        <th>ExpectedRevenue</th>
-        <th>Edit Opportunity</th>
+        <th class='hidden-phone'>Id</th>
+        <th>Full Name</th>
+        <th class='hidden-phone'>Title</th>
+        <th>Phone</th>
+        <th class='hidden-phone'>Email</th>
+        <th>Edit</th>
         <th>
             <a href="#/new" class="btn btn-primary">New</a>
         </th>
@@ -17,14 +16,14 @@
     </thead>
     <tbody>
 
-    <tr ng-repeat="opp in opportunities | filter:search | orderBy:'Name'">
-        <td>{{opp.Id}}</td>
-        <td>{{opp.Name}}</td>
-        <td>{{opp.StageName}}</td>
-        <td>{{opp.CloseDate}}</td>
-        <td>{{opp.ExpectedRevenue}}</td>
+    <tr ng-repeat="contact in contacts">
+        <td class='hidden-phone'>{{contact.Id}}</td>
+        <td >{{contact.FirstName}} {{contact.LastName}}</td>
+        <td class='hidden-phone'>{{contact.Title}}</td>
+        <td>{{contact.Phone}}</td>
+        <td class='hidden-phone'>{{contact.Email}}</td>
         <td>
-            <a href="#/edit/{{opp.Id}}"><i class="icon-pencil"></i></a>
+            <a href="#/edit/{{contact.Id}}"><i class="icon-pencil"></i></a>
         </td>
         <td></td>
 
