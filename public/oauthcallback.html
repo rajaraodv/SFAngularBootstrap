@@ -32,20 +32,8 @@ OAuth callback page - loaded in the popup by OAuth authorization.
     <title>OAuth Callback</title>
     <script>
         function onloadCallback(){
-            var oauthResponse = {};
-            debugger;
-            alert(1);
-            if (window.location.hash) {
-                var message = window.location.hash.substr(1);
-                var nvps = message.split('&');
-                for (var nvp in nvps) {
-                    var parts = nvps[nvp].split('=');
-                    oauthResponse[parts[0]] = unescape(parts[1]);
-                }
-            }
-              alert(2);
-            window.opener.sessionCallback(oauthResponse);
-            window.close();
+            window.opener.sessionCallback(window.location.href);
+           // window.close();
         }
     </script>
 </head>

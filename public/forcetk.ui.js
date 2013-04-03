@@ -145,7 +145,7 @@
                 //Simply checking for childwindow  won't work on iphone because iPhone doesn't allow checking (setInterval)
                 //until the *main/parent*-window is *in focus* (which wont be the case until the child window is closed).
                 window.sessionCallback = function(loc) {
-                    alert('in parents sessioncallback');
+                    alert('in parents sessioncallback' + loc);
                     loginWindow.close();
                     that._sessionCallback(loc);
                 };
@@ -196,6 +196,7 @@
 
         _sessionCallback:function _sessionCallback(loc) {
             alert("in _sessionCallback");
+            debugger;
             var oauthResponse = {},
                 fragment = loc.split("#")[1];
 
