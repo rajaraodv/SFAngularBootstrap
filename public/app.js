@@ -35,7 +35,7 @@ function getSFConfig() {
         return {
             'sfLoginURL': 'https://login.salesforce.com/',
             'consumerKey': '3MVG9A2kN3Bn17huxQ_nFw2X9UgjpxsCn.CZgify3keA9sgl.VASp6A5HxfUFUtKH9IN7sgBH4ow7aS1WLYaa',
-            'oAuthCallbackURL': 'http://localhost:3000',
+            'oAuthCallbackURL': 'http://localhost:3000/proxy/',
             'proxyUrl': proxyUrl,
             'client': null //Forcetk client. Set after login
         }
@@ -47,7 +47,7 @@ function getSFConfig() {
         return {
             'sfLoginURL': 'https://login.salesforce.com/',
             'consumerKey': '3MVG9A2kN3Bn17huxQ_nFw2X9Ur2FK9lemhq7IntIqIla7wP93hi9qjsy_rvX.b4T1eBt0k9eFQLxQu.KsrG5',
-            'oAuthCallbackURL': 'https://mysterious-beach-6478.herokuapp.com/',
+            'oAuthCallbackURL': 'https://mysterious-beach-6478.herokuapp.com/proxy/',
             'proxyUrl': proxyUrl,
             'client': null  //Forcetk client. Set after login
         }
@@ -72,17 +72,21 @@ angular.module('Contact', []).factory('Contact', function (AngularForceObjectFac
 
 function ListCtrl($scope, AngularForce, Contact, SFConfig) {
     $scope.login = function () {
+        alert('do login');
         AngularForce.login(function () {
+            alert("login successful!");
             $scope.query();
         });
     };
 
     $scope.query = function () {
+        alert("querying..");
         Contact.query(function (data) {
+            alert("..got contacts");
             $scope.contacts = data.records;
             $scope.$apply();//Required coz sfdc uses jquery.ajax
         });
-    }
+    };
 
     //Already logged in, probably coming back from details or new page so automatically re-query and show the list
     if (SFConfig.client) {
