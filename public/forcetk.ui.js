@@ -146,7 +146,10 @@
                 //until the *main/parent*-window is *in focus* (which wont be the case until the child window is closed).
                 window.sessionCallback = function(loc) {
                     alert('in parents sessioncallback' + loc);
-                    loginWindow.close();
+                    setTimeout(function() {
+                        loginWindow.close();
+                    }, 10);
+
                     that._sessionCallback(loc);
                 };
 
