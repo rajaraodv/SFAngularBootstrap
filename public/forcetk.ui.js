@@ -144,6 +144,7 @@
                 if (loginWindow) {
                     // Creating an interval to detect popup window location change event
                     var interval = setInterval(function () {
+                        alert("checking");
                         if (loginWindow.closed) {
                             alert('child window closed');
                             // Clearing interval if popup was closed
@@ -158,7 +159,7 @@
                                 that._sessionCallback(loc);
                             }
                         }
-                    }, 10);
+                    }, 2000);
 
                     loginWindow.focus();
                 }
