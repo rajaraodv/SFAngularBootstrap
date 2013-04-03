@@ -146,9 +146,10 @@
                     alert("in parent");
                     setTimeout(function() {
                         loginWindow.close();
-                    }, 10);
+                        that._sessionCallback(loc);
+                    }, 1000);
 
-                    that._sessionCallback(loc);
+
                 };
 
 
