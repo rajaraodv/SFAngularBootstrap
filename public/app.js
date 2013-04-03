@@ -31,6 +31,7 @@ app.config(function ($routeProvider) {
 function getSFConfig() {
     var location = document.location.origin;
     var proxyUrl = location + '/proxy/';
+
     if (location.indexOf('localhost') >= 0) {
         return {
             'sfLoginURL': 'https://login.salesforce.com/',
