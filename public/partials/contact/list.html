@@ -16,7 +16,6 @@
     <a href="#/new" class="btn btn-primary">New</a>    
 </div>
 
-<div style="float: clear;"></div>
 
 <table width="80%" class="table">
     <thead>
@@ -52,9 +51,10 @@
         <p class="btn " ng-click="doCreate()">&nbsp;+&nbsp;</p>
     </div>
 
-    <div ng-repeat="contact in contacts">
-    <p class="btn btn-block" style="padding-left: 5px; text-align: left;" ng-click="doView(contact.Id)">{{contact.FirstName}} {{contact.LastName}}, {{contact.Account.Name}}</p>
-    </div>
+    <table class="table">
+        <tr ng-click="doView(contact.Id)" ng-repeat="contact in contacts"><td> {{contact.FirstName}} {{contact.LastName}}, {{contact.Account.Name}}</td><td><i class="icon-chevron-right"></i></td></tr>
+    </table>
+
 </div>
 
 </div>
