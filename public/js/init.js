@@ -46,7 +46,7 @@ function getSFConfig() {
         return {
             'sfLoginURL': 'https://login.salesforce.com/',
             'consumerKey': '3MVG9A2kN3Bn17huxQ_nFw2X9Ur2FK9lemhq7IntIqIla7wP93hi9qjsy_rvX.b4T1eBt0k9eFQLxQu.KsrG5',
-            'oAuthCallbackURL': 'https://mysterious-beach-6478.herokuapp.com/oauthcallback.html',
+            'oAuthCallbackURL': 'https://mysterious-beach-6478.herokuapp.com/#/callback',
             'proxyUrl': 'https://mysterious-beach-6478.herokuapp.com/proxy/',
             'client': null  //Forcetk client. Set after login
         }
