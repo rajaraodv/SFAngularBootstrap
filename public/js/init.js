@@ -1,10 +1,15 @@
+/**
+ *
+ * This configures and initializes AngularJS app. Place this file BEFORE app.js (where your actual app is located).
+ *
+ */
 var app = angular.module('project', ['AngularForce', 'AngularForceObjectFactory', 'Contact']);
 
-//Set SFConfig
-app.constant('SFConfig', getSFConfig());
-
 /**
- * Returns SFConfig object depending on where (localhost v/s heroku v/s visualforce) the app is running.
+ * SFConfig is a central configuration JS Object. It is used by angular-force.js and also your app to set and retrieve
+ * various configuration or authentication related information.
+ *
+ * Note: Please configure SFConfig Salesforce consumerkey, proxyUrl etc in getSFConfig() below.
  *
  * @property SFConfig Salesforce Config object with the following properties.
  * @attribute {String} sfLoginURL       Salesforce login url
@@ -17,6 +22,13 @@ app.constant('SFConfig', getSFConfig());
  * @attribute {String} instanceUrl      Your Org. specific url. Set by forcetk.
 
  * @returns SFConfig object
+ */
+app.constant('SFConfig', getSFConfig());
+
+/**
+ * Please configure Salesforce consumerkey, proxyUrl etc in getSFConfig() below.
+ *
+ * @returns SFConfig object depending on where (localhost v/s heroku v/s visualforce) the app is running.
  */
 function getSFConfig() {
     var location = document.location;

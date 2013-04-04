@@ -1,4 +1,4 @@
-<form name="myForm">
+<form class="well" name="myForm">
     <div class="control-group" ng-class="{error: myForm.Name.$invalid}">
         <label>First Name</label>
         <input type="text" name="FirstName" ng-model="contact.FirstName" required>
@@ -30,14 +30,15 @@
     </div>
 
 
-    <br>
-    
-    <button ng-click="save()" ng-disabled="isClean() || myForm.$invalid"
-            class="btn btn-primary">Save
-    </button>
-    <button ng-click="destroy()"
-            ng-show="contact.Id" class="btn btn-danger">Delete
-    </button>
+    <p style='text-align: center;padding-bottom: 30px;padding-top: 40px;'>
+        <button ng-click="save()" ng-disabled="isClean() || myForm.$invalid"
+                class="btn btn-primary">Save
+        </button>
+        <button ng-click="destroy()"
+                ng-show="contact.Id" class="btn btn-danger">Delete
+        </button>
+    </p>
+
 </form>
 
 <button ng-click="doCancel()" class="btn">Cancel</button>

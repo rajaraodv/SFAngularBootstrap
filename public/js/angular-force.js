@@ -1,19 +1,26 @@
 /**
- * AngularForce Module helps with logging into Salesforce. It internally depends on Cordova(Phonegap apps) and
+ * AngularForce library provides glue b/w Angular.js and Saleforce's forcetk libraries to help easily build
+ * AngularJS based Salesforce apps.
+ *
+ * It contains the following two Angular Modules.
+ * 1. AngularForce - Helps with authentication with Salesforce
+ * 2. AngularForceObjectFactory - Creates & returns different kind of AngularForceObject class based on the params.
+ *
+ */
+
+
+/**
+ * AngularForce Module helps with authentication with Salesforce. It internally depends on Cordova(Phonegap apps) and
  * forcetk.ui(web apps) to do so.
  *
  * @param SFConfig An AngularJS object that is used to store forcetk.client.
- * If
  */
 angular.module('AngularForce', []).
     service('AngularForce', function (SFConfig) {
 
         this.authenticated = function () {
-            if (SFConfig.client) {
-                return true;
-            }
-            return false;
-        }
+          return SFConfig.client ? true : false;
+        };
 
         this.login = function (callback) {
             if (SFConfig.client) { //already logged in
@@ -90,6 +97,12 @@ angular.module('AngularForce', []).
             }
         };
 
+        /**
+         * Creates a forcetk.clientUI object using information from SFConfig. Please set SFConfig information
+         * in init.js (or via environment variables).
+         *
+         * @returns {forcetk.ClientUI}
+         */
         function getForceTKClientUI() {
             return new forcetk.ClientUI(SFConfig.sfLoginURL, SFConfig.consumerKey, SFConfig.oAuthCallbackURL,
                 function forceOAuthUI_successHandler(forcetkClient) {
@@ -165,14 +178,11 @@ angular.module('AngularForceObjectFactory', []).factory('AngularForceObjectFacto
             if (!soql) {
                 soql = 'SELECT ' + fields.join(',') + ' FROM ' + type + ' ' + where + ' LIMIT ' + limit;
             }
-            console.log('soql');
             return SFConfig.client.query(soql, successCB, failureCB);
         };
 
         /*RSC And who doesn't love SOSL*/
         AngularForceObject.search = function (successCB, failureCB, sosl) {
-            console.log('1');
-            console.log(sosl);
             return SFConfig.client.search(sosl, successCB, failureCB);
         };
 
@@ -207,10 +217,6 @@ angular.module('AngularForceObjectFactory', []).factory('AngularForceObjectFacto
         };
 
         AngularForceObject.remove = function (obj, successCB, failureCB) {
-            console.log('in delete');
-            console.log(obj);
-            console.log(type);
-
             return SFConfig.client.del(type, obj.Id, successCB, failureCB);
         };
 
