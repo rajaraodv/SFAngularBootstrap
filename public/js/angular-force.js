@@ -8,7 +8,7 @@
 angular.module('AngularForce', []).
     service('AngularForce', function (SFConfig) {
 
-        this.authenticated = function() {
+        this.authenticated = function () {
             if (SFConfig.client) {
                 return true;
             }
@@ -24,6 +24,7 @@ angular.module('AngularForce', []).
                 return this.setCordovaLoginCred(callback);
             } else if (typeof getSFSessionId === 'function') { //visualforce
                 //??
+                return null;
             } else { //standalone / heroku / localhost
                 return this.loginWeb(callback);
             }
@@ -72,56 +73,35 @@ angular.module('AngularForce', []).
             if (SFConfig.client) { //already loggedin
                 return callback();
             }
-            var ftkClientUI = new forcetk.ClientUI(SFConfig.sfLoginURL, SFConfig.consumerKey, SFConfig.oAuthCallbackURL,
-                function forceOAuthUI_successHandler(forcetkClient) { // successCallback
-                    console.log('OAuth success!');
-                    SFConfig.client = forcetkClient;
-                    SFConfig.client.serviceURL = forcetkClient.instanceUrl
-                        + '/services/data/'
-                        + forcetkClient.apiVersion;
-
-                    return callback();
-                }, 
-                function forceOAuthUI_errorHandler() {}, 
-                SFConfig.proxyUrl);
-
-            //Set proxyUrl BEFORE login
-            //ftkClientUI.client.proxyUrl = SFConfig.proxyUrl;
-
+            var ftkClientUI = getForceTKClientUI();
             ftkClientUI.login();
         };
 
         this.oauthCallback = function (callbackString) {
-            var ftkClientUI = new forcetk.ClientUI(SFConfig.sfLoginURL, SFConfig.consumerKey, SFConfig.oAuthCallbackURL,
+            var ftkClientUI = getForceTKClientUI();
+            ftkClientUI.oauthCallback(callbackString);
+        };
+
+        this.logout = function (callbackString) {
+            if (SFConfig.client) {
+                var ftkClientUI = getForceTKClientUI();
+                ftkClientUI.client = SFConfig.client;
+                ftkClientUI.logout(callbackString);
+            }
+        };
+
+        function getForceTKClientUI() {
+            return new forcetk.ClientUI(SFConfig.sfLoginURL, SFConfig.consumerKey, SFConfig.oAuthCallbackURL,
                 function forceOAuthUI_successHandler(forcetkClient) {
                     console.log('OAuth callback success!');
                     SFConfig.client = forcetkClient;
                     SFConfig.client.serviceURL = forcetkClient.instanceUrl
                         + '/services/data/'
-                        + forcetkClient.apiVersion;                    
-                }, 
-                function forceOAuthUI_errorHandler() {}, 
+                        + forcetkClient.apiVersion;
+                },
+                function forceOAuthUI_errorHandler() {
+                },
                 SFConfig.proxyUrl);
-
-            ftkClientUI.oauthCallback(callbackString);
-        }
-
-        this.logout = function(callbackString) {
-            if (SFConfig.client) {
-                var ftkClientUI = new forcetk.ClientUI(SFConfig.sfLoginURL, SFConfig.consumerKey, SFConfig.oAuthCallbackURL,
-                    function forceOAuthUI_successHandler(forcetkClient) {
-                        console.log('OAuth callback success!');
-                        SFConfig.client = forcetkClient;
-                        SFConfig.client.serviceURL = forcetkClient.instanceUrl
-                            + '/services/data/'
-                            + forcetkClient.apiVersion;                    
-                    }, 
-                    function forceOAuthUI_errorHandler() {}, 
-                    SFConfig.proxyUrl);
-
-                ftkClientUI.client = SFConfig.client;
-                ftkClientUI.logout(callbackString);
-            }
         }
     });
 
@@ -218,7 +198,6 @@ angular.module('AngularForceObjectFactory', []).factory('AngularForceObjectFacto
 
         AngularForceObject.update = function (obj, successCB, failureCB) {
             var data = AngularForceObject.getChangedData(obj);
-            debugger;
             return SFConfig.client.update(type, obj.Id, data, function (data) {
                 if (data && !angular.isArray(data)) {
                     return successCB(new AngularForceObject(data))

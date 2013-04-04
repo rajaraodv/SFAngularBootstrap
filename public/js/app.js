@@ -34,21 +34,16 @@ function HomeCtrl($scope, AngularForce, $location) {
         AngularForce.logout();
         $location.path('/login');
     }
-
 }
 
 function LoginCtrl($scope, AngularForce) {
     $scope.login = function() {
-        AngularForce.login(function() {
-            alert('hello');
-        })
+        AngularForce.login();
     }
 }
 
-
 function CallbackCtrl($scope, AngularForce, $location) {
     AngularForce.oauthCallback(document.location.href);
-
     $location.path('/contacts');
 }
 
