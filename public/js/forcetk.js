@@ -177,7 +177,7 @@ if (forcetk.Client === undefined) {
                     xhr.setRequestHeader('SalesforceProxy-Endpoint', url);
                 }
                 xhr.setRequestHeader(that.authzHeader, "OAuth " + that.sessionId);
-                xhr.setRequestHeader('X-User-Agent', 'salesforce-toolkit-rest-javascript-angularjs-php/' + that.apiVersion);
+                xhr.setRequestHeader('X-User-Agent', 'salesforce-toolkit-rest-javascript-angularjs-node/' + that.apiVersion);
             }
         });
     }
