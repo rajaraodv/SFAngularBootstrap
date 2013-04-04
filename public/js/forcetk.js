@@ -149,6 +149,7 @@ if (forcetk.Client === undefined) {
         var that = this;
         var url = this.instanceUrl + '/services/data' + path;
 
+        console.log('delete ' + url);
         $j.ajax({
             type: method || "GET",
             async: this.asyncAjax,
@@ -176,7 +177,7 @@ if (forcetk.Client === undefined) {
                     xhr.setRequestHeader('SalesforceProxy-Endpoint', url);
                 }
                 xhr.setRequestHeader(that.authzHeader, "OAuth " + that.sessionId);
-                xhr.setRequestHeader('X-User-Agent', 'salesforce-toolkit-rest-javascript/' + that.apiVersion);
+                xhr.setRequestHeader('X-User-Agent', 'salesforce-toolkit-rest-javascript-angularjs-php/' + that.apiVersion);
             }
         });
     }
@@ -203,7 +204,7 @@ if (forcetk.Client === undefined) {
         request.responseType = "arraybuffer";
         
         request.setRequestHeader(that.authzHeader, "OAuth " + that.sessionId);
-        request.setRequestHeader('X-User-Agent', 'salesforce-toolkit-rest-javascript/' + that.apiVersion);
+        request.setRequestHeader('X-User-Agent', 'salesforce-toolkit-rest-javascript-angularjs/' + that.apiVersion);
         if (this.proxyUrl !== null) {
             request.setRequestHeader('SalesforceProxy-Endpoint', url);
         }
@@ -438,8 +439,10 @@ if (forcetk.Client === undefined) {
      * @param callback function to which response will be passed
      * @param [error=null] function to which jqXHR will be passed in case of error
      */
+    /* RSC parameter should be "q" */
     forcetk.Client.prototype.search = function(sosl, callback, error) {
-        this.ajax('/' + this.apiVersion + '/search?s=' + escape(sosl)
+
+        this.ajax('/' + this.apiVersion + '/search?q=' + escape(sosl)
         , callback, error);
     }
 }

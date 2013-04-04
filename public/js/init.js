@@ -3,17 +3,6 @@ var app = angular.module('project', ['AngularForce', 'AngularForceObjectFactory'
 //Set SFConfig
 app.constant('SFConfig', getSFConfig());
 
-//Set AngularJS Routes
-app.config(function ($routeProvider) {
-    $routeProvider.
-        when('/', {controller: HomeCtrl, templateUrl: 'partials/home.html'}).
-        when('/callback', {controller: CallbackCtrl, templateUrl: 'partials/callback.html'}).
-        when('/contacts', {controller: ContactListCtrl, templateUrl: 'partials/contact/list.html'}).
-        when('/edit/:contactId', {controller: ContactEditCtrl, templateUrl: 'partials/contact/detail.html'}).
-        when('/new', {controller: ContactCreateCtrl, templateUrl: 'partials/contact/detail.html'}).
-        otherwise({redirectTo: '/'});
-});
-
 /**
  * Returns SFConfig object depending on where (localhost v/s heroku v/s visualforce) the app is running.
  *
@@ -56,14 +45,3 @@ function getSFConfig() {
         throw  'You are not running on localhost or heroku. Please configure SFConfig';
     }
 }
-
-
-app.config(function ($routeProvider) {
-    $routeProvider.
-        when('/', {controller: HomeCtrl, templateUrl: 'partials/home.html'}).
-        when('/callback', {controller: CallbackCtrl, templateUrl: 'partials/callback.html'}).
-        when('/contacts', {controller: ContactListCtrl, templateUrl: 'partials/contact/list.html'}).
-        when('/edit/:contactId', {controller: ContactEditCtrl, templateUrl: 'partials/contact/detail.html'}).
-        when('/new', {controller: ContactCreateCtrl, templateUrl: 'partials/contact/detail.html'}).
-        otherwise({redirectTo: '/'});
-});

@@ -90,30 +90,36 @@
         logout:function logout(logoutCallback) {
             var that = this,
 
+
                 refreshToken = encodeURIComponent(this.client.refreshToken),
 
                 doSecurLogout = function () {
+                    var url = that.client.instanceUrl + '/secur/logout.jsp';
                     $.ajax({
                         type:'GET',
                         async:that.client.asyncAjax,
-                        url:that.client.instanceUrl + '/secur/logout.jsp',
+                        url:(this.proxyUrl !== null) ? this.proxyUrl: url,
                         cache:false,
                         processData:false,
                         success:function (data, textStatus, jqXHR) {
-                            if (logoutCallback) logoutCallback.call();
+                            if (logoutCallback) logoutCallback();
                         },
                         error:function (jqXHR, textStatus, errorThrown) {
                             console.log('logout error');
-                            if (logoutCallback) logoutCallback.call();
+                            if (logoutCallback) logoutCallback();
                         }
                     });
                 }
 
+            console.log('logging out');
+
             localStorage.setItem('ftkui_refresh_token', null);
+
+            var url = this.instanceUrl + '/services/oauth2/revoke';
 
             $.ajax({
                 type:'POST',
-                url:that.client.instanceUrl + '/services/oauth2/revoke',
+                url:(this.proxyUrl !== null) ? this.proxyUrl: url,
                 cache:false,
                 processData:false,
                 data:'token=' + refreshToken,
@@ -130,40 +136,7 @@
             var that = this;
 
             if (typeof window.device === 'undefined') { 
-                // Most likely app is running in a desktop browser
-                /* RSC also show undefined when posted to Heroku as PHP app. */
-                /* killing the popup */
-                /*
-                console.log('_authenticate undefined');
-                var winHeight = 524,
-                    winWidth = 674,
-                    centeredY = window.screenY + (window.outerHeight / 2 - winHeight / 2),
-                    centeredX = window.screenX + (window.outerWidth / 2 - winWidth / 2);
 
-                var loginWindow = window.open(this._getAuthorizeUrl(),
-                    'Login to Salesforce', 'height=' + winHeight + ',width=' + winWidth
-                        + ',toolbar=1,scrollbars=1,status=1,resizable=1,location=0,menuBar=0'
-                        + ',left=' + centeredX + ',top=' + centeredY);
-
-                if (loginWindow) {
-                    // Creating an interval to detect popup window location change event
-                    var interval = setInterval(function () {
-                        if (loginWindow.closed) {
-                            // Clearing interval if popup was closed
-                            clearInterval(interval);
-                        } else {
-                            var loc = loginWindow.location.href;
-                            if (typeof loc !== 'undefined' && loc.indexOf(that.callbackURL) == 0) {
-                                loginWindow.close();
-                                that._sessionCallback(loc);
-                            }
-                        }
-                    }, 250);
-
-                    loginWindow.focus();
-                }
-                */
-                /* can we just update the location? */
                 document.location.href=this._getAuthorizeUrl();
 
             } else if (window.plugins && window.plugins.childBrowser) { // This is PhoneGap/Cordova app

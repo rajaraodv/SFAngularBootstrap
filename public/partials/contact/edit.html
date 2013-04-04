@@ -26,13 +26,12 @@
         <span ng-show="myForm.Phone.$error.required" class="help-inline">
         Required</span>
 
-        <label>Id</label>
-        <input disabled="disabled" type="text" name="Id" ng-model="contact.Id">
+        <input disabled="disabled" type="hidden" name="Id" ng-model="contact.Id">
     </div>
 
 
     <br>
-    <a href="#/" class="btn">Cancel</a>
+    
     <button ng-click="save()" ng-disabled="isClean() || myForm.$invalid"
             class="btn btn-primary">Save
     </button>
@@ -40,3 +39,5 @@
             ng-show="contact.Id" class="btn btn-danger">Delete
     </button>
 </form>
+
+<button ng-click="doCancel()" class="btn">Cancel</button>
