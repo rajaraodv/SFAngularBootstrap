@@ -43,7 +43,6 @@ angular.module('AngularForce', []).
                 if (creds.data)  // Event sets the `data` object with the auth data.
                     credsData = creds.data;
 
-                  debugger;
                 SFConfig.client = new forcetk.Client(credsData.clientId, credsData.loginUrl);
                 SFConfig.client.setSessionToken(credsData.accessToken, apiVersion, credsData.instanceUrl);
                 SFConfig.client.setRefreshToken(credsData.refreshToken);
@@ -75,13 +74,32 @@ angular.module('AngularForce', []).
                         + forcetkClient.apiVersion;
 
                     return callback();
-                });
+                },
+                function forceOAuthUI_errorHandler() {
+                },
+                SFConfig.proxyUrl);
 
             //Set proxyUrl BEFORE login
-            ftkClientUI.client.proxyUrl = SFConfig.proxyUrl;
+            //ftkClientUI.client.proxyUrl = SFConfig.proxyUrl;
 
             ftkClientUI.login();
         };
+
+        this.oauthCallback = function (callbackString) {
+            var ftkClientUI = new forcetk.ClientUI(SFConfig.sfLoginURL, SFConfig.consumerKey, SFConfig.oAuthCallbackURL,
+                function forceOAuthUI_successHandler(forcetkClient) {
+                    console.log('OAuth callback success!');
+                    SFConfig.client = forcetkClient;
+                    SFConfig.client.serviceURL = forcetkClient.instanceUrl
+                        + '/services/data/'
+                        + forcetkClient.apiVersion;
+                },
+                function forceOAuthUI_errorHandler() {
+                },
+                SFConfig.proxyUrl);
+
+            ftkClientUI.oauthCallback(callbackString);
+        }
     });
 
 /**
@@ -161,7 +179,6 @@ angular.module('AngularForceObjectFactory', []).factory('AngularForceObjectFacto
 
         AngularForceObject.update = function (obj, successCB, failureCB) {
             var data = AngularForceObject.getChangedData(obj);
-            debugger;
             return SFConfig.client.update(type, obj.Id, data, function (data) {
                 if (data && !angular.isArray(data)) {
                     return successCB(new AngularForceObject(data))

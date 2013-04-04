@@ -56,7 +56,6 @@ if (forcetk.Client === undefined) {
      * @constructor
      */
     forcetk.Client = function(clientId, loginUrl, proxyUrl) {
-        debugger;
         this.clientId = clientId;
         this.loginUrl = loginUrl || 'https://login.salesforce.com/';
         if (typeof proxyUrl === 'undefined' || proxyUrl === null) {
@@ -96,9 +95,7 @@ if (forcetk.Client === undefined) {
      */
     forcetk.Client.prototype.refreshAccessToken = function(callback, error) {
         var that = this;
-
         var url = this.loginUrl + '/services/oauth2/token';
-
         $j.ajax({
             type: 'POST',
             url: (this.proxyUrl !== null) ? this.proxyUrl: url,

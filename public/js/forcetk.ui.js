@@ -30,7 +30,7 @@
      *
      * @constructor
      */
-    forcetk.ClientUI = function (loginURL, consumerKey, callbackURL, successCallback, errorCallback) {
+    forcetk.ClientUI = function (loginURL, consumerKey, callbackURL, successCallback, errorCallback, proxyUrl) {
 
         if (typeof loginURL !== 'string') throw new TypeError('loginURL should be of type String');
         this.loginURL = loginURL;
@@ -49,7 +49,8 @@
         this.errorCallback = errorCallback;
 
         // Creating forcetk.Client instance
-        this.client = new forcetk.Client(consumerKey, loginURL);
+        /* RSC added proxyUrl for PHP app */
+        this.client = new forcetk.Client(consumerKey, loginURL, proxyUrl);
 
     }
 
@@ -62,11 +63,12 @@
 
             var refreshToken = localStorage.getItem('ftkui_refresh_token');
             
-            if (refreshToken && refreshToken != "undefined") {
+            if (refreshToken) {
                 var that = this;
                 this.client.setRefreshToken(refreshToken);
                 this.client.refreshAccessToken(
                     function refreshAccessToken_successHandler(sessionToken) {
+                    	
                         if (that.successCallback) {
                             that.client.setSessionToken(sessionToken.access_token, null, sessionToken.instance_url);
                             that.successCallback.call(that, that.client);
@@ -127,7 +129,12 @@
         _authenticate:function _authenticate() {
             var that = this;
 
-            if (typeof window.device === 'undefined') { // Most likely app is running in a desktop browser
+            if (typeof window.device === 'undefined') { 
+                // Most likely app is running in a desktop browser
+                /* RSC also show undefined when posted to Heroku as PHP app. */
+                /* killing the popup */
+                /*
+                console.log('_authenticate undefined');
                 var winHeight = 524,
                     winWidth = 674,
                     centeredY = window.screenY + (window.outerHeight / 2 - winHeight / 2),
@@ -138,42 +145,29 @@
                         + ',toolbar=1,scrollbars=1,status=1,resizable=1,location=0,menuBar=0'
                         + ',left=' + centeredX + ',top=' + centeredY);
 
-                loginWindow.focus();
-                //IMPORTANT - Set this to global so that the child window can call this back via window.opener.sessionCallback
-                //Simply checking for childwindow  won't work on iphone because iPhone doesn't allow checking (setInterval)
-                //until the *main/parent*-window is *in focus* (which wont be the case until the child window is closed).
-                window.sessionCallback = function(loc) {
-                   // alert("in parent");
-                    setTimeout(function() {
-                        loginWindow.close();
-                        that._sessionCallback(loc);
-                    }, 1000);
+                if (loginWindow) {
+                    // Creating an interval to detect popup window location change event
+                    var interval = setInterval(function () {
+                        if (loginWindow.closed) {
+                            // Clearing interval if popup was closed
+                            clearInterval(interval);
+                        } else {
+                            var loc = loginWindow.location.href;
+                            if (typeof loc !== 'undefined' && loc.indexOf(that.callbackURL) == 0) {
+                                loginWindow.close();
+                                that._sessionCallback(loc);
+                            }
+                        }
+                    }, 250);
 
-
-                };
-
-
-//                if (loginWindow) {
-//                    // Creating an interval to detect popup window location change event
-//                    var interval = setInterval(function () {
-//                        if (loginWindow.closed) {
-//                            // Clearing interval if popup was closed
-//                            clearInterval(interval);
-//                        } else {
-//                            var loc = loginWindow.location.href;
-//                            if (typeof loc !== 'undefined' && loc.indexOf(that.callbackURL) == 0) {
-//                                clearInterval(interval);
-//                                loginWindow.close();
-//                                that._sessionCallback(loc);
-//                            }
-//                        }
-//                    }, 2000);
-//
-//                    loginWindow.focus();
-//                }
+                    loginWindow.focus();
+                }
+                */
+                /* can we just update the location? */
+                document.location.href=this._getAuthorizeUrl();
 
             } else if (window.plugins && window.plugins.childBrowser) { // This is PhoneGap/Cordova app
-
+                console.log('_authenticate phoneGap');
                 var childBrowser = window.plugins.childBrowser;
                 childBrowser.onLocationChange = function (loc) {
                     if (loc.indexOf(that.callbackURL) == 0) {
@@ -194,6 +188,40 @@
             return this.loginURL + 'services/oauth2/authorize?'
                 + '&response_type=token&client_id=' + encodeURIComponent(this.consumerKey)
                 + '&redirect_uri=' + encodeURIComponent(this.callbackURL);
+        },
+
+        oauthCallback: function oauthCallback(loc) {
+            var oauthResponse = {},
+                fragment = loc.split("#")[2];
+
+            if (fragment) {
+                var nvps = fragment.split('&');
+                for (var nvp in nvps) {
+                    var parts = nvps[nvp].split('=');
+                    oauthResponse[parts[0]] = decodeURIComponent(parts[1]);
+                }
+            }
+
+            if (typeof oauthResponse.access_token === 'undefined') {
+
+                if (this.errorCallback)
+                    this.errorCallback({code:0, message:'Unauthorized - no OAuth response!'});
+                else
+                    console.log('ERROR: No OAuth response!')
+
+            } else {
+
+                localStorage.setItem('ftkui_refresh_token', oauthResponse.refresh_token);
+
+                this.client.setRefreshToken(oauthResponse.refresh_token);
+                this.client.setSessionToken(oauthResponse.access_token, null, oauthResponse.instance_url);
+
+                if (this.successCallback)
+                    this.successCallback(this.client);
+                else
+                    console.log('INFO: OAuth login successful!')
+
+            }
         },
 
         _sessionCallback:function _sessionCallback(loc) {
