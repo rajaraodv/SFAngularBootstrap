@@ -57,10 +57,7 @@ function ContactListCtrl($scope, AngularForce, $location, Contact) {
     $scope.working = false;
 
     Contact.query(function (data) {
-        $scope.working = true;
-        $scope.$apply();
         $scope.contacts = data.records;
-        $scope.working = false;
         $scope.$apply();//Required coz sfdc uses jquery.ajax
     }, function (data) {
         alert('Query Error');
