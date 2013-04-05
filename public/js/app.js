@@ -24,7 +24,7 @@ angular.module('Contact', []).factory('Contact', function (AngularForceObjectFac
     return Contact;
 });
 
-function HomeCtrl($scope, AngularForce, $location) {
+function HomeCtrl($scope, AngularForce, $location, $route) {
     $scope.authenticated = AngularForce.authenticated();
     if (!$scope.authenticated) {
         return $location.path('/login');
@@ -33,6 +33,14 @@ function HomeCtrl($scope, AngularForce, $location) {
     $scope.logout = function () {
         AngularForce.logout();
         $location.path('/login');
+
+//        AngularForce.logout(function() {
+//            $scope.$apply(function(){
+//                $location.path('/login');
+//                $route.reload();
+//            });//Required coz sfdc uses jquery.ajax
+//        });
+
     }
 }
 
@@ -65,7 +73,8 @@ function ContactListCtrl($scope, AngularForce, $location, Contact) {
 
     $scope.isWorking = function () {
         return $scope.working;
-    }
+    };
+
     $scope.doSearch = function (searchTerm) {
         Contact.search(function (data) {
             $scope.contacts = data;
@@ -73,12 +82,12 @@ function ContactListCtrl($scope, AngularForce, $location, Contact) {
         }, function (data) {
         }, 'Find {' + escape($scope.searchTerm) + '*} IN ALL FIELDS RETURNING CONTACT (Id, FirstName, LastName, Title, Email, Phone, Account.Name)');
 
-    }
+    };
 
     $scope.doView = function (contactId) {
         console.log('doView');
         $location.path('/view/' + contactId);
-    }
+    };
 
     $scope.doCreate = function () {
         $location.path('/new');
@@ -94,8 +103,6 @@ function ContactCreateCtrl($scope, $location, Contact) {
             });
         });
     }
-
-
 }
 
 function ContactViewCtrl($scope, AngularForce, $location, $routeParams, Contact) {
@@ -141,7 +148,7 @@ function ContactDetailCtrl($scope, AngularForce, $location, $routeParams, Contac
                 console.log('delete error');
             }
         );
-    }
+    };
 
     $scope.save = function () {
         if ($scope.contact.id) {

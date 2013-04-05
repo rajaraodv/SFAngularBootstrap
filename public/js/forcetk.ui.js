@@ -98,9 +98,14 @@
                     $.ajax({
                         type:'GET',
                         async:that.client.asyncAjax,
-                        url:(this.proxyUrl !== null) ? this.proxyUrl: url,
+                        url:(that.proxyUrl !== null) ? that.proxyUrl: url,
                         cache:false,
                         processData:false,
+                        beforeSend: function(xhr) {
+                            if (that.proxyUrl !== null) {
+                                xhr.setRequestHeader('SalesforceProxy-Endpoint', url);
+                            }
+                        },
                         success:function (data, textStatus, jqXHR) {
                             if (logoutCallback) logoutCallback();
                         },
@@ -109,20 +114,26 @@
                             if (logoutCallback) logoutCallback();
                         }
                     });
-                }
+                };
 
             console.log('logging out');
 
-            localStorage.setItem('ftkui_refresh_token', null);
+            //Remove localstorage item
+            localStorage.removeItem('ftkui_refresh_token');
 
             var url = this.instanceUrl + '/services/oauth2/revoke';
 
             $.ajax({
                 type:'POST',
-                url:(this.proxyUrl !== null) ? this.proxyUrl: url,
+                url:(that.proxyUrl !== null) ? that.proxyUrl: url,
                 cache:false,
                 processData:false,
                 data:'token=' + refreshToken,
+                beforeSend: function(xhr) {
+                    if (that.proxyUrl !== null) {
+                        xhr.setRequestHeader('SalesforceProxy-Endpoint', url);
+                    }
+                },
                 success:function (data, textStatus, jqXHR) {
                     doSecurLogout();
                 },

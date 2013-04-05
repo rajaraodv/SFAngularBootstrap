@@ -89,11 +89,16 @@ angular.module('AngularForce', []).
             ftkClientUI.oauthCallback(callbackString);
         };
 
-        this.logout = function (callbackString) {
+        this.logout = function (callback) {
             if (SFConfig.client) {
                 var ftkClientUI = getForceTKClientUI();
                 ftkClientUI.client = SFConfig.client;
-                ftkClientUI.logout(callbackString);
+                ftkClientUI.instanceUrl = SFConfig.client.instanceUrl;
+                ftkClientUI.proxyUrl = SFConfig.client.proxyUrl;
+                ftkClientUI.logout(callback);
+
+                //set SFConfig.client to null
+                SFConfig.client = null;
             }
         };
 

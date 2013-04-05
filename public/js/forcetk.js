@@ -148,8 +148,6 @@ if (forcetk.Client === undefined) {
     forcetk.Client.prototype.ajax = function(path, callback, error, method, payload, retry) {
         var that = this;
         var url = this.instanceUrl + '/services/data' + path;
-
-        console.log('delete ' + url);
         $j.ajax({
             type: method || "GET",
             async: this.asyncAjax,
