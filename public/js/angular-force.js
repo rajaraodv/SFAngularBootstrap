@@ -6,6 +6,7 @@
  * 1. AngularForce - Helps with authentication with Salesforce
  * 2. AngularForceObjectFactory - Creates & returns different kind of AngularForceObject class based on the params.
  *
+ * @author Raja Rao DV @rajaraodv
  */
 
 
@@ -19,7 +20,7 @@ angular.module('AngularForce', []).
     service('AngularForce', function (SFConfig) {
 
         this.authenticated = function () {
-          return SFConfig.client ? true : false;
+            return SFConfig.client ? true : false;
         };
 
         this.login = function (callback) {
@@ -29,9 +30,9 @@ angular.module('AngularForce', []).
 
             if (location.protocol === 'file:' && cordova) { //Cordova / PhoneGap
                 return this.setCordovaLoginCred(callback);
-            } else if (typeof getSFSessionId === 'function') { //visualforce
-                //??
-                return null;
+            } else if (typeof getSessionId === 'function') { //visualforce
+                //(Have a global func. called getSessionId tht sets sessionId from VF to SFConfig.sessionId)
+                return this.loginVF();
             } else { //standalone / heroku / localhost
                 return this.loginWeb(callback);
             }
@@ -83,6 +84,20 @@ angular.module('AngularForce', []).
             var ftkClientUI = getForceTKClientUI();
             ftkClientUI.login();
         };
+
+        /**
+         * Login to VF. Technically, you are already logged in when running the app, but we need this function
+         * to set sessionId to SFConfig.client (forcetkClient)
+         *
+         * Usage: Import AngularForce and call AngularForce.login() while running in VF page.
+         *
+         * @param callback A callback function (usually in the same controller that initiated login)
+         */
+        this.loginVF = function () {
+            SFConfig.client = new forcetk.Client();
+            SFConfig.client.setSessionToken(SFConfig.sessionId);
+        };
+
 
         this.oauthCallback = function (callbackString) {
             var ftkClientUI = getForceTKClientUI();

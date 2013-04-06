@@ -5,17 +5,19 @@
 var express = require('express')
     , http = require('http')
     , path = require('path')
-    , request = require('request');
+    , request = require('request')
+    , ejs = require('ejs');
 
 //SET APP_RELATIVE_PATH to a folder where your app's index.html resides.
- var APP_RELATIVE_PATH = path.join(__dirname, '/public/');
- console.log(APP_RELATIVE_PATH);
-   
+var APP_RELATIVE_PATH = path.join(__dirname, '/public/');
+console.log(APP_RELATIVE_PATH);
+
 
 var app = express();
 
 app.configure(function () {
     app.set('port', process.env.PORT || 3000);
+    app.set('view engine', 'ejs');
     app.use(express.favicon());
     app.use(express.logger('dev'));
     app.use(express.bodyParser());
@@ -25,6 +27,18 @@ app.configure(function () {
 app.configure('development', function () {
     app.use(express.errorHandler());
 });
+
+var client_id = process.env.client_id;
+var app_url = process.env.app_url;
+
+
+app.get('/', function (req, res) {
+    res.render("index", { client_id: client_id, app_url: app_url});
+});
+app.get('/index.html', function (req, res) {
+    res.render("index", { client_id: client_id, app_url: app_url});
+});
+
 
 app.all('/proxy/?*', function (req, res) {
     log(req);
@@ -41,7 +55,7 @@ app.all('/proxy/?*', function (req, res) {
         }
     }
 
-    if((!body || JSON.stringify(body) === "\"{}\"") && (typeof sfEndpoint != "string")) {
+    if ((!body || JSON.stringify(body) === "\"{}\"") && (typeof sfEndpoint != "string")) {
         return res.send('Request successful (but nothing to proxy to SF)');
     }
     request({

@@ -1,19 +1,4 @@
 /**
- * Configure all the AngularJS routes here.
- */
-app.config(function ($routeProvider) {
-    $routeProvider.
-        when('/', {controller: HomeCtrl, templateUrl: 'partials/home.html'}).
-        when('/login', {controller: LoginCtrl, templateUrl: 'partials/login.html'}).
-        when('/callback', {controller: CallbackCtrl, templateUrl: 'partials/callback.html'}).
-        when('/contacts', {controller: ContactListCtrl, templateUrl: 'partials/contact/list.html'}).
-        when('/view/:contactId', {controller: ContactViewCtrl, templateUrl: 'partials/contact/view.html'}).
-        when('/edit/:contactId', {controller: ContactDetailCtrl, templateUrl: 'partials/contact/edit.html'}).
-        when('/new', {controller: ContactDetailCtrl, templateUrl: 'partials/contact/edit.html'}).
-        otherwise({redirectTo: '/'});
-});
-
-/**
  * Describe Salesforce object to be used in the app. For example: Below AngularJS factory shows how to describe and
  * create an 'Contact' object. And then set its type, fields, where-clause etc.
  *
@@ -33,14 +18,6 @@ function HomeCtrl($scope, AngularForce, $location, $route) {
     $scope.logout = function () {
         AngularForce.logout();
         $location.path('/login');
-
-//        AngularForce.logout(function() {
-//            $scope.$apply(function(){
-//                $location.path('/login');
-//                $route.reload();
-//            });//Required coz sfdc uses jquery.ajax
-//        });
-
     }
 }
 
