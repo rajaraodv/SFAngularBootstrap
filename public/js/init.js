@@ -42,8 +42,12 @@ app.config(function ($routeProvider) {
 function getSFConfig() {
     var location = document.location;
     var href = location.href;
-    if (href.indexOf('file:') >= 0) { //Phonegap or visualforce
+    if (href.indexOf('file:') >= 0) { //Phonegap
         return {};
+    } else if (configFromEnv && configFromEnv.sessionId) { //VisualForce just sets sessionId (as that's all what is required)
+        return {
+            sessionId: configFromEnv.sessionId
+        }
     } else {
         if (!configFromEnv || configFromEnv.client_id == "" || configFromEnv.client_id == "undefined"
             || configFromEnv.app_url == "" || configFromEnv.app_url == "undefined") {
