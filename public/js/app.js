@@ -74,9 +74,9 @@ function ContactListCtrl($scope, AngularForce, $location, Contact) {
 function ContactCreateCtrl($scope, $location, Contact) {
     $scope.save = function () {
         Contact.save($scope.contact, function (contact) {
-            var p = contact;
+            var c = contact;
             $scope.$apply(function () {
-                $location.path('/view/' + p.id);
+                $location.path('/view/' + c.Id);
             });
         });
     }
@@ -128,7 +128,7 @@ function ContactDetailCtrl($scope, AngularForce, $location, $routeParams, Contac
     };
 
     $scope.save = function () {
-        if ($scope.contact.id) {
+        if ($scope.contact.Id) {
             $scope.contact.update(function () {
                 $scope.$apply(function () {
                     $location.path('/view/' + $scope.contact.Id);
@@ -137,17 +137,17 @@ function ContactDetailCtrl($scope, AngularForce, $location, $routeParams, Contac
             });
         } else {
             Contact.save($scope.contact, function (contact) {
-                var p = contact;
+                var c = contact;
                 $scope.$apply(function () {
-                    $location.path('/view/' + p.id);
+                    $location.path('/view/' + c.Id);
                 });
             });
         }
     };
 
     $scope.doCancel = function () {
-        if ($scope.contact.id) {
-            $location.path('/view/' + $scope.contact.id);
+        if ($scope.contact.Id) {
+            $location.path('/view/' + $scope.contact.Id);
         } else {
             $location.path('/contacts');
         }
