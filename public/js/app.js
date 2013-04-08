@@ -139,7 +139,7 @@ function ContactDetailCtrl($scope, AngularForce, $location, $routeParams, Contac
             Contact.save($scope.contact, function (contact) {
                 var c = contact;
                 $scope.$apply(function () {
-                    $location.path('/view/' + c.id); //use lowercase id (instead of Id) coz the SFDC responds like that
+                    $location.path('/view/' + c.Id || c.id);
                 });
             });
         }

@@ -220,6 +220,13 @@ angular.module('AngularForceObjectFactory', []).factory('AngularForceObjectFacto
             var data = AngularForceObject.getNewObjectData(obj);
             return SFConfig.client.create(type, data, function (data) {
                 if (data && !angular.isArray(data)) {
+                    //Salesforce returns "id" in lowercase when an object is
+                    //created. Where as it returns id as "Id" for every other call.
+                    // This might confuse people, so change "id" to "Id".
+                    if(data.id) {
+                        data.Id =  data.id;
+                        delete data.id;
+                    }
                     return successCB(new AngularForceObject(data))
                 }
                 return successCB(data);
