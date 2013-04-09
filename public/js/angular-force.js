@@ -79,10 +79,10 @@ angular.module('AngularForce', []).
             if (!SFConfig) throw 'Must set app.SFConfig where app is your AngularJS app';
 
             if (SFConfig.client) { //already loggedin
-                return callback();
+                return callback && callback;
             }
             var ftkClientUI = getForceTKClientUI();
-            ftkClientUI.login();
+            ftkClientUI.login(callback);
         };
 
         /**
@@ -159,9 +159,20 @@ angular.module('AngularForceObjectFactory', []).factory('AngularForceObjectFacto
         var fields = params.fields;
         var where = params.where;
         var limit = params.limit;
-        if (!limit) {
-            limit = 25;
-        }
+        var orderBy = params.orderBy;
+
+        //Make it soql compliant
+        fields = fields && fields.length > 0 ? fields.join(', ') : '';
+        where = where && where != '' ? ' where ' + where : '';
+        limit = limit && limit != '' ? ' LIMIT ' + limit : 'LIMIT 25';
+        orderBy = orderBy && orderBy != '' ? ' ORDER BY ' + orderBy : '';
+
+        //Construct SOQL
+        var soql = 'SELECT ' + fields + ' FROM ' + type + where + orderBy + limit;
+
+        //Construct SOSL
+        // Note: "__SEARCH_TERM_PLACEHOLDER__" will be replaced by actual search query just before making that query
+        var sosl = 'Find {__SEARCH_TERM_PLACEHOLDER__*} IN ALL FIELDS RETURNING ' + type + ' (' + fields + ')';
 
         /**
          * AngularForceObject acts like a super-class for actual SF Objects. It provides wrapper to forcetk ajax apis
@@ -193,22 +204,23 @@ angular.module('AngularForceObjectFactory', []).factory('AngularForceObjectFacto
             return AngularForceObject.remove(this, cb);
         };
 
-        /*RSC Modified to accept optional SOQL*/
-        AngularForceObject.query = function (successCB, failureCB, soql) {
-            if (!soql) {
-                soql = 'SELECT ' + fields.join(',') + ' FROM ' + type + ' ' + where + ' LIMIT ' + limit;
-            }
+        AngularForceObject.query = function (successCB, failureCB) {
             return SFConfig.client.query(soql, successCB, failureCB);
         };
 
         /*RSC And who doesn't love SOSL*/
-        AngularForceObject.search = function (successCB, failureCB, sosl) {
-            return SFConfig.client.search(sosl, successCB, failureCB);
+        AngularForceObject.search = function (searchTerm, successCB, failureCB) {
+            var fields = fields && fields.length > 0 ? '(' + fields.join(', ') + ')' : '';
+            var limit = limit && limit != '' ? ' LIMIT ' + limit : '';
+
+            //Replace __SEARCH_TERM_PLACEHOLDER__ from SOSL with actual search term.
+            var s = sosl.replace('__SEARCH_TERM_PLACEHOLDER__', escape(searchTerm));
+            return SFConfig.client.search(s, successCB, failureCB);
         };
 
 
         AngularForceObject.get = function (params, successCB, failureCB) {
-            return SFConfig.client.retrieve(type, params.id, fields.join(), function (data) {
+            return SFConfig.client.retrieve(type, params.id, fields, function (data) {
                 if (data && !angular.isArray(data)) {
                     return successCB(new AngularForceObject(data))
                 }
@@ -223,8 +235,8 @@ angular.module('AngularForceObjectFactory', []).factory('AngularForceObjectFacto
                     //Salesforce returns "id" in lowercase when an object is
                     //created. Where as it returns id as "Id" for every other call.
                     // This might confuse people, so change "id" to "Id".
-                    if(data.id) {
-                        data.Id =  data.id;
+                    if (data.id) {
+                        data.Id = data.id;
                         delete data.id;
                     }
                     return successCB(new AngularForceObject(data))
@@ -272,7 +284,5 @@ angular.module('AngularForceObjectFactory', []).factory('AngularForceObjectFacto
 
         return AngularForceObject;
     }
-
     return AngularForceObjectFactory;
 });
-

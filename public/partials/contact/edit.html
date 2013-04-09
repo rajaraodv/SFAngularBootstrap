@@ -1,30 +1,26 @@
 <form class="well" name="myForm">
     <div class="control-group" ng-class="{error: myForm.Name.$invalid}">
         <label>First Name</label>
-        <input type="text" name="FirstName" ng-model="contact.FirstName" required>
-        <span ng-show="myForm.FirstNameName.$error.required" class="help-inline">
-        Required</span>
+        <input type="text" name="FirstName" ng-model="contact.FirstName"/>
 
         <label>Last Name</label>
-        <input type="text" name="LastName" ng-model="contact.LastName" required>
+        <input type="text" name="LastName" ng-model="contact.LastName" required/>
         <span ng-show="myForm.LastName.$error.required" class="help-inline">
         Required</span>
 
         <label>Title</label>
-        <input type="text" name="Title" ng-model="contact.Title" required>
-        <span ng-show="myForm.Title.$error.required" class="help-inline">
-        Required</span>
+        <input type="text" name="Title" ng-model="contact.Title"/>
+
+        <label>Account Name</label>
+        <input type="text" name="AccountName" ng-model="contact.Account.Name"/>
 
         <label>Email</label>
-        <input type="text" name="Email" ng-model="contact.Email" required>
-        <span ng-show="myForm.Email.$error.required" class="help-inline">
-        Required</span>
+        <input type="text" name="Email" ng-model="contact.Email"/>
 
 
         <label>Phone</label>
-        <input type="text" name="Phone" ng-model="contact.Phone" required>
-        <span ng-show="myForm.Phone.$error.required" class="help-inline">
-        Required</span>
+        <input type="text" name="Phone" ng-model="contact.Phone"/>
+
 
         <input disabled="disabled" type="hidden" name="Id" ng-model="contact.Id">
     </div>

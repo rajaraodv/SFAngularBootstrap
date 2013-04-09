@@ -5,7 +5,16 @@
  *  PS: This module is injected into ListCtrl, EditCtrl etc. controllers to further consume the object.
  */
 angular.module('Contact', []).factory('Contact', function (AngularForceObjectFactory) {
-    var Contact = AngularForceObjectFactory({type: 'Contact', fields: ['FirstName', 'LastName', 'Title', 'Phone', 'Email', 'Id'], where: '', limit: 10});
+    //Describe the contact object
+    var objDesc = {
+        type: 'Contact',
+        fields: ['FirstName', 'LastName', 'Title', 'Phone', 'Email', 'Id', 'Account.Name'],
+        where: '',
+        orderBy: 'LastName',
+        limit: 20
+    };
+    var Contact = AngularForceObjectFactory(objDesc);
+
     return Contact;
 });
 
@@ -46,19 +55,18 @@ function ContactListCtrl($scope, AngularForce, $location, Contact) {
         $scope.$apply();//Required coz sfdc uses jquery.ajax
     }, function (data) {
         alert('Query Error');
-    }, 'Select Id, FirstName, LastName, Title, Email, Phone, Account.Name From Contact Order By LastName Limit 20 ');
+    });
 
     $scope.isWorking = function () {
         return $scope.working;
     };
 
-    $scope.doSearch = function (searchTerm) {
-        Contact.search(function (data) {
+    $scope.doSearch = function () {
+        Contact.search($scope.searchTerm, function (data) {
             $scope.contacts = data;
             $scope.$apply();//Required coz sfdc uses jquery.ajax
         }, function (data) {
-        }, 'Find {' + escape($scope.searchTerm) + '*} IN ALL FIELDS RETURNING CONTACT (Id, FirstName, LastName, Title, Email, Phone, Account.Name)');
-
+        });
     };
 
     $scope.doView = function (contactId) {

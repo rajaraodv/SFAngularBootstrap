@@ -53,7 +53,10 @@
 
         <table class="table">
             <tr ng-click="doView(contact.Id)" ng-repeat="contact in contacts">
-                <td> {{contact.FirstName}} {{contact.LastName}}, {{contact.Account.Name}}</td>
+                <td> {{contact.FirstName}} {{contact.LastName}}
+                    <br/>
+                    <small><i>{{contact.Account.Name}}</i></small>
+                </td>
                 <td><i class="icon-chevron-right"></i></td>
             </tr>
         </table>
