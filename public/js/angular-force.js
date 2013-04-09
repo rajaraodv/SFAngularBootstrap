@@ -246,7 +246,6 @@ angular.module('AngularForceObjectFactory', []).factory('AngularForceObjectFacto
 
         AngularForceObject.update = function (obj, successCB, failureCB) {
             var data = AngularForceObject.getChangedData(obj);
-            data = obj;
             return SFConfig.client.update(type, obj.Id, data, function (data) {
                 if (data && !angular.isArray(data)) {
                     return successCB(new AngularForceObject(data))
