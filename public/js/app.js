@@ -33,6 +33,11 @@ function HomeCtrl($scope, AngularForce, $location, $route) {
 function LoginCtrl($scope, AngularForce) {
     $scope.login = function () {
         AngularForce.login();
+    };
+
+    //If in visualforce, directly login
+    if(AngularForce.inVisualforce) {
+        AngularForce.login();
     }
 }
 

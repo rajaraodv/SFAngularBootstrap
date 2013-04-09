@@ -19,6 +19,8 @@
 angular.module('AngularForce', []).
     service('AngularForce', function (SFConfig) {
 
+        this.inVisualforce = document.location.href.indexOf('visual.force.com') > 0;
+
         this.authenticated = function () {
             return SFConfig.client ? true : false;
         };
@@ -30,8 +32,7 @@ angular.module('AngularForce', []).
 
             if (location.protocol === 'file:' && cordova) { //Cordova / PhoneGap
                 return this.setCordovaLoginCred(callback);
-            } else if (typeof getSessionId === 'function') { //visualforce
-                //(Have a global func. called getSessionId tht sets sessionId from VF to SFConfig.sessionId)
+            } else if (SFConfig.inVisualforce) { //visualforce
                 return this.loginVF();
             } else { //standalone / heroku / localhost
                 return this.loginWeb(callback);
