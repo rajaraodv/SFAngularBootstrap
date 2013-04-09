@@ -160,6 +160,7 @@ angular.module('AngularForceObjectFactory', []).factory('AngularForceObjectFacto
         var where = params.where;
         var limit = params.limit;
         var orderBy = params.orderBy;
+        var fieldsArray = angular.isArray(params.fields) ? params.fields : [];
 
         //Make it soql compliant
         fields = fields && fields.length > 0 ? fields.join(', ') : '';
@@ -210,8 +211,6 @@ angular.module('AngularForceObjectFactory', []).factory('AngularForceObjectFacto
 
         /*RSC And who doesn't love SOSL*/
         AngularForceObject.search = function (searchTerm, successCB, failureCB) {
-            var fields = fields && fields.length > 0 ? '(' + fields.join(', ') + ')' : '';
-            var limit = limit && limit != '' ? ' LIMIT ' + limit : '';
 
             //Replace __SEARCH_TERM_PLACEHOLDER__ from SOSL with actual search term.
             var s = sosl.replace('__SEARCH_TERM_PLACEHOLDER__', escape(searchTerm));
@@ -220,7 +219,7 @@ angular.module('AngularForceObjectFactory', []).factory('AngularForceObjectFacto
 
 
         AngularForceObject.get = function (params, successCB, failureCB) {
-            return SFConfig.client.retrieve(type, params.id, fields, function (data) {
+            return SFConfig.client.retrieve(type, params.id, fieldsArray, function (data) {
                 if (data && !angular.isArray(data)) {
                     return successCB(new AngularForceObject(data))
                 }
@@ -247,6 +246,7 @@ angular.module('AngularForceObjectFactory', []).factory('AngularForceObjectFacto
 
         AngularForceObject.update = function (obj, successCB, failureCB) {
             var data = AngularForceObject.getChangedData(obj);
+            data = obj;
             return SFConfig.client.update(type, obj.Id, data, function (data) {
                 if (data && !angular.isArray(data)) {
                     return successCB(new AngularForceObject(data))
@@ -266,7 +266,7 @@ angular.module('AngularForceObjectFactory', []).factory('AngularForceObjectFacto
             var diff = {};
             var orig = obj._orig;
             if (!orig)  return {};
-            angular.forEach(fields, function (field) {
+            angular.forEach(fieldsArray, function (field) {
                 if (field != 'Id' && obj[field] !== orig[field]) diff[field] = obj[field];
             });
             return diff;
@@ -274,7 +274,7 @@ angular.module('AngularForceObjectFactory', []).factory('AngularForceObjectFacto
 
         AngularForceObject.getNewObjectData = function (obj) {
             var newObj = {};
-            angular.forEach(fields, function (field) {
+            angular.forEach(fieldsArray, function (field) {
                 if (field != 'Id') {
                     newObj[field] = obj[field];
                 }
@@ -284,5 +284,6 @@ angular.module('AngularForceObjectFactory', []).factory('AngularForceObjectFacto
 
         return AngularForceObject;
     }
+
     return AngularForceObjectFactory;
 });
