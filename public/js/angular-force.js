@@ -80,7 +80,7 @@ angular.module('AngularForce', []).
             if (!SFConfig) throw 'Must set app.SFConfig where app is your AngularJS app';
 
             if (SFConfig.client) { //already loggedin
-                return callback && callback;
+                return callback && callback();
             }
             var ftkClientUI = getForceTKClientUI();
             ftkClientUI.login(callback);
