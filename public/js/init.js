@@ -1,7 +1,7 @@
 /**
  * This initializes AngularJS app. Place this file BEFORE app.js (where your actual app is located).
  */
-var app = angular.module('AngularSFDemo', ['AngularForce', 'AngularForceObjectFactory', 'Contact', 'Contact2']);
+var app = angular.module('AngularSFDemo', ['AngularForce', 'AngularForceObjectFactory', 'Contact']);
 app.constant('SFConfig', getSFConfig());
 
 /**
