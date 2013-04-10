@@ -8,8 +8,6 @@
         <div style="float: left">
             <div style="margin-bottom: 10px;">
                 <input type="text" ng-model="searchTerm" class="search-query" placeholder="Search">
-
-                <p class="btn btn-primary" ng-click="doSearch(searchString)">Go</p>
             </div>
         </div>
 
@@ -18,20 +16,20 @@
         </div>
 
 
-        <table width="80%" class="table">
+        <table width="80%" class="table table-striped">
             <thead>
             <tr>
                 <th class='hidden-phone'>Id</th>
-                <th>Full Name</th>
-                <th>Company</th>
-                <th class='hidden-phone'>Title</th>
+                <th><a href="" ng-click="predicate = '[LastName,FirstName]'; reverse=!reverse" style="cursor: pointer;">Full Name</a></th>
+                <th><a href="" ng-click="predicate = 'Account.Name'; reverse=!reverse" style="cursor: pointer;">Company</a></th>
+                <th class='hidden-phone'><a href="" ng-click="predicate = 'Title'; reverse=!reverse" style="cursor: pointer;">Title</a></th>
                 <th>Phone</th>
-                <th class='hidden-phone'>Email</th>
+                <th class='hidden-phone'><a href="" ng-click="predicate = 'Email'; reverse=!reverse" style="cursor: pointer;">Email</a></th>
             </tr>
             </thead>
             <tbody>
 
-            <tr ng-repeat="contact in contacts">
+            <tr ng-repeat="contact in contacts | filter:searchTerm |orderBy:predicate:reverse">
                 <td class='hidden-phone'>{{contact.Id}}</td>
                 <td><a href="#/view/{{contact.Id}}">{{contact.FirstName}} {{contact.LastName}}</a></td>
                 <td>{{contact.Account.Name}}</td>
