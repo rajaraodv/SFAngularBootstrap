@@ -1,7 +1,7 @@
 /**
  * This initializes AngularJS app. Place this file BEFORE app.js (where your actual app is located).
  */
-var app = angular.module('AngularSFDemo', ['AngularForce', 'AngularForceObjectFactory', 'Contact', 'DirectReports']);
+var app = angular.module('AngularSFDemo', ['AngularForce', 'AngularForceObjectFactory', 'Contact', 'ui.bootstrap.dropdownToggle']);
 app.constant('SFConfig', getSFConfig());
 
 /**
@@ -11,6 +11,7 @@ app.config(function ($routeProvider) {
     $routeProvider.
         when('/', {controller: HomeCtrl, templateUrl: 'partials/home.html'}).
         when('/login', {controller: LoginCtrl, templateUrl: 'partials/login.html'}).
+        when('/logout', {controller: LoginCtrl, templateUrl: 'partials/logout.html'}).
         when('/callback', {controller: CallbackCtrl, templateUrl: 'partials/callback.html'}).
         when('/contacts', {controller: ContactListCtrl, templateUrl: 'partials/contact/list.html'}).
         when('/view/:contactId', {controller: ContactViewCtrl, templateUrl: 'partials/contact/view.html'}).

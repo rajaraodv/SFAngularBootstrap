@@ -5,47 +5,34 @@
  *  PS: This module is injected into ListCtrl, EditCtrl etc. controllers to further consume the object.
  */
 angular.module('Contact', []).factory('Contact', function (AngularForceObjectFactory) {
-
+    //Describe the contact object
     var objDesc = {
-        type: 'User',
-        fields: ['Name', 'Id', 'SmallPhotoUrl', 'Email', 'Phone', 'Title'],
-        //where: "Email='dcarroll@salesforce.com'",
+        type: 'Contact',
+        fields: ['FirstName', 'LastName', 'Title', 'Phone', 'Email', 'Id', 'Account.Name'],
         where: '',
-        limit: 1,
-        soslFields: 'Email Fields'
+        orderBy: 'LastName',
+        limit: 20
     };
     var Contact = AngularForceObjectFactory(objDesc);
 
     return Contact;
 });
 
-angular.module('DirectReports', []).factory('DirectReports', function (AngularForceObjectFactory) {
-
-    var objDesc = {
-        type: 'User',
-        fields: ['Name', 'Id', 'Title', 'Email', 'Phone'],
-        where: "ManagerId=''",
-        orderBy: 'LastName',
-        limit: 25
-    };
-    var DirectReports = AngularForceObjectFactory(objDesc);
-
-    return DirectReports;
-});
-
 function HomeCtrl($scope, AngularForce, $location, $route) {
-    $scope.authenticated = AngularForce.authenticated();
-    if (!$scope.authenticated) {
-        return $location.path('/login');
-    }
-
-    $scope.logout = function () {
-        AngularForce.logout();
+    //If in visualforce, directly login
+    if (AngularForce.inVisualforce) {
+        $location.path('/login');
+    } else if (AngularForce.refreshToken) { //If web, try to relogin using refresh-token
+        AngularForce.login(function () {
+            $location.path('/contacts/');
+            $scope.$apply();//Required coz sfdc uses jquery.ajax
+        });
+    } else {
         $location.path('/login');
     }
 }
 
-function LoginCtrl($scope, AngularForce) {
+function LoginCtrl($scope, AngularForce, $location) {
     $scope.login = function () {
         AngularForce.login();
     };
@@ -54,97 +41,55 @@ function LoginCtrl($scope, AngularForce) {
     if (AngularForce.inVisualforce) {
         AngularForce.login();
     }
+
+    $scope.isLoggedIn = function () {
+        return AngularForce.authenticated();
+    };
+
+    $scope.logout = function () {
+        AngularForce.logout(function () {
+            //Now go to logout page
+            $location.path('/logout');
+            $scope.$apply();
+        });
+    };
 }
 
 function CallbackCtrl($scope, AngularForce, $location) {
     AngularForce.oauthCallback(document.location.href);
+
+    //Note: Set hash to empty before setting path to /contacts to keep the url clean w/o oauth info.
+    //..coz oauth CB returns access_token in its own hash making it two hashes (1 from angular,
+    // and another from oauth)
+    $location.hash('');
     $location.path('/contacts');
 }
 
-function ContactListCtrl($scope, AngularForce, $location, Contact, DirectReports) {
-    $scope.authenticated = AngularForce.authenticated();
-    if (!$scope.authenticated) {
-        return $location.path('/login');
+function ContactListCtrl($scope, AngularForce, $location, Contact) {
+    if (!AngularForce.authenticated()) {
+        return $location.path('/home');
     }
 
-    $scope.searchTerm = 'dcarroll@salesforce.com';
+    $scope.searchTerm = '';
+    $scope.working = false;
 
+    Contact.query(function (data) {
+        $scope.contacts = data.records;
+        $scope.$apply();//Required coz sfdc uses jquery.ajax
+    }, function (data) {
+        alert('Query Error');
+    });
 
-    $scope.findContactWithManagerId = function (contactList) {
-        if(contactList.length == 1){
-            return contactList[0];
-        }
-        for (var i = 0; i < contactList.length; i++) {
-            if (contactList[i].ManagerId) {
-                return contactList[i];
-            }
-        }
-        return;
-    };
-
-    $scope.hasManager = function() {
-        return $scope.contact && $scope.contact.ManagerId;
-    }
-
-    $scope.getImgUrl = function (contact) {
-        return contact && contact.SmallPhotoUrl + "?oauth_token=" + $scope.sessionId;
-    };
-
-    $scope.directReports = [];
-
-    $scope.hasDirectReports = function () {
-        return $scope.directReports.length > 0;
-    };
-
-    $scope.getDirectReports = function () {
-        var soql = "SELECT Name,SmallPhotoUrl,Title,ManagerId,Email from User where ManagerId='" + $scope.contact.Id + "'";
-        DirectReports.queryWithCustomSOQL(soql, function (data) {
-            $scope.sessionId = AngularForce.sessionId;
-
-
-            $scope.directReports = data.records;
-            $scope.$apply();//Required coz sfdc uses jquery.ajax
-        }, function (data) {
-            alert('Query Error');
-        });
-    };
-
-    $scope.getCurrentContactManager = function () {
-        if(!$scope.contact.ManagerId) {  //CEO
-            $scope.manager = null;
-            return;
-        }
-        var soql = "SELECT Name,SmallPhotoUrl,Title,ManagerId,Email from User where Id='" + $scope.contact.ManagerId + "'";
-        DirectReports.queryWithCustomSOQL(soql, function (data) {
-            $scope.sessionId = AngularForce.sessionId;
-
-            $scope.manager = data.records[0];
-            $scope.$apply();//Required coz sfdc uses jquery.ajax
-        }, function (data) {
-            alert('Query Error');
-        });
+    $scope.isWorking = function () {
+        return $scope.working;
     };
 
     $scope.doSearch = function () {
-        var soql = "SELECT Name, SmallPhotoUrl, Title, Id, ManagerId,Email from User where Email='" + $scope.searchTerm + "'";
-
-        Contact.queryWithCustomSOQL(soql, function (data) {
-            $scope.sessionId = AngularForce.sessionId;
-
-
-            $scope.contact = $scope.findContactWithManagerId(data.records);
+        Contact.search($scope.searchTerm, function (data) {
+            $scope.contacts = data;
             $scope.$apply();//Required coz sfdc uses jquery.ajax
-
-            $scope.getCurrentContactManager();
-            $scope.getDirectReports();
         }, function (data) {
-            alert('Query Error');
         });
-    };
-
-    $scope.newSearch = function (contact) {
-        $scope.searchTerm = contact.Email;
-        $scope.doSearch();
     };
 
     $scope.doView = function (contactId) {
@@ -154,9 +99,7 @@ function ContactListCtrl($scope, AngularForce, $location, Contact, DirectReports
 
     $scope.doCreate = function () {
         $location.path('/new');
-    };
-    $scope.doSearch();
-
+    }
 }
 
 function ContactCreateCtrl($scope, $location, Contact) {
@@ -187,11 +130,12 @@ function ContactDetailCtrl($scope, AngularForce, $location, $routeParams, Contac
 
     if ($routeParams.contactId) {
         AngularForce.login(function () {
-            Contact.get({id: $routeParams.contactId}, function (contact) {
-                self.original = contact;
-                $scope.contact = new Contact(self.original);
-                $scope.$apply();//Required coz sfdc uses jquery.ajax
-            });
+            Contact.get({id: $routeParams.contactId},
+                function (contact) {
+                    self.original = contact;
+                    $scope.contact = new Contact(self.original);
+                    $scope.$apply();//Required coz sfdc uses jquery.ajax
+                });
         });
     } else {
         $scope.contact = new Contact();
@@ -200,7 +144,7 @@ function ContactDetailCtrl($scope, AngularForce, $location, $routeParams, Contac
 
     $scope.isClean = function () {
         return angular.equals(self.original, $scope.contact);
-    };
+    }
 
     $scope.destroy = function () {
         self.original.destroy(
@@ -209,8 +153,8 @@ function ContactDetailCtrl($scope, AngularForce, $location, $routeParams, Contac
                     $location.path('/contacts');
                 });
             },
-            function () {
-                console.log('delete error');
+            function (errors) {
+                alert("Could not delete contact!\n" + JSON.parse(errors.responseText)[0].message);
             }
         );
     };

@@ -1,66 +1,65 @@
-<div>
+<div ng-show="isWorking()">
+    <p>Working</p>
+</div>
 
-    <div class="container">
+<div ng-show="!isWorking()">
+    <!-- This div is only displayed in deskcops (see below for mobile phones)-->
+    <div class="hidden-phone">
+        <div style="float: left">
+            <div style="margin-bottom: 10px;">
+                <input type="text" ng-model="searchTerm" class="search-query" placeholder="Search">
+
+                <p class="btn btn-primary" ng-click="doSearch(searchString)">Go</p>
+            </div>
+        </div>
+
+        <div style="float: right">
+            <a href="#/new" class="btn btn-primary">New</a>
+        </div>
+
+
+        <table width="80%" class="table">
+            <thead>
+            <tr>
+                <th class='hidden-phone'>Id</th>
+                <th>Full Name</th>
+                <th>Company</th>
+                <th class='hidden-phone'>Title</th>
+                <th>Phone</th>
+                <th class='hidden-phone'>Email</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            <tr ng-repeat="contact in contacts">
+                <td class='hidden-phone'>{{contact.Id}}</td>
+                <td><a href="#/view/{{contact.Id}}">{{contact.FirstName}} {{contact.LastName}}</a></td>
+                <td>{{contact.Account.Name}}</td>
+                <td class='hidden-phone'>{{contact.Title}}</td>
+                <td>{{contact.Phone}}</td>
+                <td class='hidden-phone'>{{contact.Email}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- This div is only displayed in mobile phones (see above for desktops) -->
+    <div class="visible-phone">
         <form class="form-inline">
             <input type="text" ng-model="searchTerm" class="input-medium search-query" placeholder="Search">
             <button ng-click="doSearch(searchString)" class="btn btn-primary">Go</button>
             <button ng-click="doCreate()" class="btn btn-default">&nbsp;+&nbsp;</button>
         </form>
 
-        <div class="span4 well" style="width:100%">
-            <table width="100%">
-                <tr ng-click="newSearch(contact)">
-                    <td>
-                        <img class="img-circle" style="width: 64px; height: 64px;"
-                             data-ng-src="{{getImgUrl(contact)}}"/>
-                    </td>
-                    <td><strong>{{contact.Name}}</strong><br/>
-                        <small><i>{{contact.Title}}</i></small>
-                        <br/>
-                        <small><i><a href="mailto:{{contact.Email}}">{{contact.Email}}</a></i></small>
-                        <br/>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <br/>
-        <strong>{{contact.Name}}'s manager:</strong>
-        <div ng-show="hasManager()">
-            <table class="table">
-                <tr ng-click="newSearch(manager)">
-                    <td style="width:65px">
-                        <img class="img-circle" style="width: 64px; height: 64px;"
-                             data-ng-src="{{getImgUrl(manager)}}"/>
-                    </td>
-                    <td><strong>{{manager.Name}}</strong><br/>
-                        <small><i>{{manager.Title}}</i></small>
-                        <br/>
-                        <small><i><a href="mailto:{{manager.Email}}">{{manager.Email}}</a></i></small>
-                        <br/>
-                    </td>
-                    <td><i class="icon-chevron-right"></i></td>
-                </tr>
-            </table>
-        </div>
-        <div ng-show="hasDirectReports()">
-            <strong>Direct Reports: {{directReports.length}}</strong>
-            <table class="table" width=100%>
-                <tr ng-click="newSearch(dr)" ng-repeat="dr in directReports">
-                    <td style="width:64px">
-                        <img class="img-circle" style="width: 64px; height: 64px;" data-ng-src="{{getImgUrl(dr)}}"/>
-                    </td>
-                    <td><strong>{{dr.Name}}</strong><br/>
-                        <small>{{dr.Title}}</small>
-                        <br/>
-                        <small><a href="mailto:{{dr.Email}}">{{dr.Email}}</a></small>
-                        <br/>
-                    </td>
-                    <td>
-                        <small><i class="icon-chevron-right"></i></small>
-                    </td>
-                </tr>
-            </table>
-        </div>
+        <table class="table">
+            <tr ng-click="doView(contact.Id)" ng-repeat="contact in contacts">
+                <td> {{contact.FirstName}} {{contact.LastName}}
+                    <br/>
+                    <small><i>{{contact.Account.Name}}</i></small>
+                </td>
+                <td><i class="icon-chevron-right"></i></td>
+            </tr>
+        </table>
     </div>
 
 </div>

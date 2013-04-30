@@ -1,0 +1,16 @@
+<div class="span4 well">
+    <p><strong>{{contact.FirstName}} {{contact.LastName}}</strong></p>
+
+    <p>{{contact.Title}}</p>
+
+    <p ng-show="contact.Account.Name">Account: {{contact.Account.Name}}</p>
+
+    <p>Email: <a href="mailto:{{contact.Email}}">{{contact.Email}}</a></p>
+
+    <p>Phone: <a href="tel:{{contact.Phone}}">{{contact.Phone}}</a></p>
+
+    <p>
+        <a class="btn" href="#/edit/{{contact.Id}}">Edit</a>
+        <a class="btn btn-primary" href="#/contacts">Back to Contacts</a>
+    </p>
+</div>

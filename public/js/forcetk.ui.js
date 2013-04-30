@@ -1,10 +1,22 @@
-/**
- * Created by Piotr Walczyszyn (outof.me | @pwalczyszyn)
- *
- * User: pwalczys
- * Date: 8/7/12
- * Time: 4:07 PM
- */
+//////////////////////////////////////////////////////////////////////////////////////
+//
+//	Copyright 2012 Piotr Walczyszyn (http://outof.me | @pwalczyszyn)
+//
+//	Licensed under the Apache License, Version 2.0 (the "License");
+//	you may not use this file except in compliance with the License.
+//	You may obtain a copy of the License at
+//
+//		http://www.apache.org/licenses/LICENSE-2.0
+//
+//	Unless required by applicable law or agreed to in writing, software
+//	distributed under the License is distributed on an "AS IS" BASIS,
+//	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//	See the License for the specific language governing permissions and
+//	limitations under the License.
+//
+//////////////////////////////////////////////////////////////////////////////////////
+
+//Updated by @rajaraodv
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
@@ -52,23 +64,23 @@
         /* RSC added proxyUrl for PHP app */
         this.client = new forcetk.Client(consumerKey, loginURL, proxyUrl);
 
-    }
+    };
 
     forcetk.ClientUI.prototype = {
 
         /**
          * Starts OAuth login process.
          */
-        login:function login() {
+        login: function login() {
 
             var refreshToken = localStorage.getItem('ftkui_refresh_token');
-            
+
             if (refreshToken) {
                 var that = this;
                 this.client.setRefreshToken(refreshToken);
                 this.client.refreshAccessToken(
                     function refreshAccessToken_successHandler(sessionToken) {
-                    	
+
                         if (that.successCallback) {
                             that.client.setSessionToken(sessionToken.access_token, null, sessionToken.instance_url);
                             that.successCallback.call(that, that.client);
@@ -87,7 +99,7 @@
 
         },
 
-        logout:function logout(logoutCallback) {
+        logout: function logout(logoutCallback) {
             var that = this,
 
 
@@ -96,20 +108,20 @@
                 doSecurLogout = function () {
                     var url = that.client.instanceUrl + '/secur/logout.jsp';
                     $.ajax({
-                        type:'GET',
-                        async:that.client.asyncAjax,
-                        url:(that.proxyUrl !== null) ? that.proxyUrl: url,
-                        cache:false,
-                        processData:false,
-                        beforeSend: function(xhr) {
+                        type: 'GET',
+                        async: that.client.asyncAjax,
+                        url: (that.proxyUrl !== null) ? that.proxyUrl : url,
+                        cache: false,
+                        processData: false,
+                        beforeSend: function (xhr) {
                             if (that.proxyUrl !== null) {
                                 xhr.setRequestHeader('SalesforceProxy-Endpoint', url);
                             }
                         },
-                        success:function (data, textStatus, jqXHR) {
+                        success: function (data, textStatus, jqXHR) {
                             if (logoutCallback) logoutCallback();
                         },
-                        error:function (jqXHR, textStatus, errorThrown) {
+                        error: function (jqXHR, textStatus, errorThrown) {
                             console.log('logout error');
                             if (logoutCallback) logoutCallback();
                         }
@@ -124,32 +136,30 @@
             var url = this.instanceUrl + '/services/oauth2/revoke';
 
             $.ajax({
-                type:'POST',
-                url:(that.proxyUrl !== null) ? that.proxyUrl: url,
-                cache:false,
-                processData:false,
-                data:'token=' + refreshToken,
-                beforeSend: function(xhr) {
+                type: 'POST',
+                url: (that.proxyUrl !== null) ? that.proxyUrl : url,
+                cache: false,
+                processData: false,
+                data: 'token=' + refreshToken,
+                beforeSend: function (xhr) {
                     if (that.proxyUrl !== null) {
                         xhr.setRequestHeader('SalesforceProxy-Endpoint', url);
                     }
                 },
-                success:function (data, textStatus, jqXHR) {
+                success: function (data, textStatus, jqXHR) {
                     doSecurLogout();
                 },
-                error:function (jqXHR, textStatus, errorThrown) {
+                error: function (jqXHR, textStatus, errorThrown) {
                     doSecurLogout();
                 }
             });
         },
 
-        _authenticate:function _authenticate() {
+        _authenticate: function _authenticate() {
             var that = this;
 
-            if (typeof window.device === 'undefined') { 
-
-                document.location.href=this._getAuthorizeUrl();
-
+            if (typeof window.device === 'undefined') {// Open authorization url directly in current browser (i.e. no popups)
+                document.location.href = this._getAuthorizeUrl();
             } else if (window.plugins && window.plugins.childBrowser) { // This is PhoneGap/Cordova app
                 console.log('_authenticate phoneGap');
                 var childBrowser = window.plugins.childBrowser;
@@ -161,14 +171,13 @@
                     }
                 };
 
-                childBrowser.showWebPage(this._getAuthorizeUrl(), {showLocationBar:true, locationBarAlign:'bottom'});
-
+                childBrowser.showWebPage(this._getAuthorizeUrl(), {showLocationBar: true, locationBarAlign: 'bottom'});
             } else {
                 throw new Error('Didn\'t find way to authenticate!');
             }
         },
 
-        _getAuthorizeUrl:function _getAuthorizeUrl() {
+        _getAuthorizeUrl: function _getAuthorizeUrl() {
             return this.loginURL + 'services/oauth2/authorize?'
                 + '&response_type=token&client_id=' + encodeURIComponent(this.consumerKey)
                 + '&redirect_uri=' + encodeURIComponent(this.callbackURL);
@@ -182,14 +191,19 @@
                 var nvps = fragment.split('&');
                 for (var nvp in nvps) {
                     var parts = nvps[nvp].split('=');
-                    oauthResponse[parts[0]] = decodeURIComponent(parts[1]);
+
+                    //Note some of the values like refresh_token might have '=' inside them
+                    //so pop the key(first item in parts) and then join the rest of the parts with =
+                    var key = parts.shift();
+                    var val = parts.join('=');
+                    oauthResponse[key] = decodeURIComponent(val);
                 }
             }
 
             if (typeof oauthResponse.access_token === 'undefined') {
 
                 if (this.errorCallback)
-                    this.errorCallback({code:0, message:'Unauthorized - no OAuth response!'});
+                    this.errorCallback({code: 0, message: 'Unauthorized - no OAuth response!'});
                 else
                     console.log('ERROR: No OAuth response!')
 
@@ -208,22 +222,28 @@
             }
         },
 
-        _sessionCallback:function _sessionCallback(loc) {
+        _sessionCallback: function _sessionCallback(loc) {
             var oauthResponse = {},
                 fragment = loc.split("#")[1];
+
 
             if (fragment) {
                 var nvps = fragment.split('&');
                 for (var nvp in nvps) {
                     var parts = nvps[nvp].split('=');
-                    oauthResponse[parts[0]] = decodeURIComponent(parts[1]);
+
+                    //Note some of the values like refresh_token might have '=' inside them
+                    //so pop the key(first item in parts) and then join the rest of the parts with =
+                    var key = parts.shift();
+                    var val = parts.join('=');
+                    oauthResponse[key] = decodeURIComponent(val);
                 }
             }
 
             if (typeof oauthResponse.access_token === 'undefined') {
 
                 if (this.errorCallback)
-                    this.errorCallback({code:0, message:'Unauthorized - no OAuth response!'});
+                    this.errorCallback({code: 0, message: 'Unauthorized - no OAuth response!'});
                 else
                     console.log('ERROR: No OAuth response!')
 
@@ -241,9 +261,7 @@
 
             }
         }
-    }
-    ;
+    };
 
     return forcetk;
-}))
-;
+}));

@@ -23,9 +23,12 @@ angular.module('AngularForce', []).
 
         this.inVisualforce = document.location.href.indexOf('visual.force.com') > 0;
 
+        this.refreshToken = localStorage.getItem('ftkui_refresh_token');
+
         this.authenticated = function () {
             return SFConfig.client ? true : false;
         };
+
 
         this.login = function (callback) {
             if (SFConfig.client) { //already logged in
@@ -88,8 +91,8 @@ angular.module('AngularForce', []).
             if (SFConfig.client) { //already loggedin
                 return callback && callback();
             }
-            var ftkClientUI = getForceTKClientUI();
-            ftkClientUI.login(callback);
+            var ftkClientUI = getForceTKClientUI(callback);
+            ftkClientUI.login();
         };
 
         /**
@@ -130,7 +133,7 @@ angular.module('AngularForce', []).
          *
          * @returns {forcetk.ClientUI}
          */
-        function getForceTKClientUI() {
+        function getForceTKClientUI(callback) {
             return new forcetk.ClientUI(SFConfig.sfLoginURL, SFConfig.consumerKey, SFConfig.oAuthCallbackURL,
                 function forceOAuthUI_successHandler(forcetkClient) {
                     console.log('OAuth callback success!');
@@ -141,8 +144,13 @@ angular.module('AngularForce', []).
 
                     //Set sessionID to angularForce coz profileImages need them
                     self.sessionId = SFConfig.client.sessionId;
+
+                    //If callback is passed, call it.
+                    callback && callback();
                 },
                 function forceOAuthUI_errorHandler() {
+                    //If callback is passed, call it.
+                    callback && callback();
                 },
                 SFConfig.proxyUrl);
         }
@@ -218,9 +226,7 @@ angular.module('AngularForceObjectFactory', []).factory('AngularForceObjectFacto
 
 
         AngularForceObject.prototype.setWhere = function (whereClause) {
-            debugger;
             where = whereClause;
-            debugger;
         };
 
         AngularForceObject.query = function (successCB, failureCB) {
